@@ -137,29 +137,29 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
       authDomain: "syrianyouthastro.firebaseapp.com",
       projectId: "syrianyouthastro",
-      storageBucket: "syrianyouthastro.firebasestorage.app",
+      storageBucket: "syrianyouthastro.appspot.com",
       messagingSenderId: "105047646564",
       appId: "1:105047646564:web:7901e202f6467b0b745a71"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
     const auth = firebase.auth();
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const storage = firebase.storage();
+    const db = firebase.firestore();
 
-    // Handle Sign Up
     document.querySelector('#signup form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
       const password = e.target[1].value;
-
       try {
         await auth.createUserWithEmailAndPassword(email, password);
         alert("✅ تم إنشاء الحساب بنجاح!");
@@ -168,12 +168,10 @@
       }
     });
 
-    // Handle Login
     document.querySelector('#login form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
       const password = e.target[1].value;
-
       try {
         await auth.signInWithEmailAndPassword(email, password);
         alert("✅ تم تسجيل الدخول!");
@@ -183,33 +181,71 @@
     });
 
     auth.onAuthStateChanged((user) => {
-  if (user) {
-    // Hide signup & login forms
-    document.querySelector('#signup').style.display = 'none';
-    document.querySelector('#login').style.display = 'none';
+      if (user) {
+        document.querySelector('#signup').style.display = 'none';
+        document.querySelector('#login').style.display = 'none';
 
-    // Show member content
-    document.body.insertAdjacentHTML('afterbegin', `
-      <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
-        👋 مرحباً، ${user.email} — 
-        <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
-      </div>
+        document.body.insertAdjacentHTML('afterbegin', `
+          <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
+            👋 مرحباً، ${user.email} — 
+            <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
+          </div>
 
-      <div class="section" id="member-area">
-        <h2>لوحة العضو</h2>
-        <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-      </div>
-    `);
-  }
-});
+          <div class="section" id="member-area">
+            <h2>لوحة العضو</h2>
+            <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
 
+            <div class="section" id="upload-area">
+              <h2>📸 مشاركة صورة فلكية</h2>
+              <form id="upload-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="text" id="astro-title" placeholder="عنوان للصورة" required style="padding: 0.5rem;">
+                <input type="file" id="astro-file" accept="image/*" required>
+                <button type="submit" style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">رفع</button>
+              </form>
+            </div>
+          </div>
+        `);
+      }
+    });
+
+    document.addEventListener('submit', async (e) => {
+      if (e.target && e.target.id === 'upload-form') {
+        e.preventDefault();
+        const fileInput = document.getElementById('astro-file');
+        const titleInput = document.getElementById('astro-title');
+        const file = fileInput.files[0];
+        const title = titleInput.value;
+        const user = auth.currentUser;
+
+        if (!file || !title || !user) {
+          alert("❗ كل الحقول مطلوبة.");
+          return;
+        }
+
+        const storageRef = storage.ref().child(`astro_uploads/${user.uid}/${file.name}`);
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on('state_changed', null, (error) => {
+          alert("❌ حدث خطأ في رفع الملف: " + error.message);
+        }, async () => {
+          const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+          await db.collection("astro_posts").add({
+            userId: user.uid,
+            email: user.email,
+            title: title,
+            imageUrl: downloadURL,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert("✅ تم رفع الصورة بنجاح!");
+          fileInput.value = '';
+          titleInput.value = '';
+        });
+      }
+    });
 
     function logout() {
-      auth.signOut().then(() => {
-        location.reload();
-      });
+      auth.signOut().then(() => location.reload());
     }
   </script>
-
 </body>
 </html>
