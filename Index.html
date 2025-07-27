@@ -182,16 +182,27 @@
       }
     });
 
-    // Show a welcome message if logged in
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        document.body.insertAdjacentHTML('afterbegin', `
-          <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
-            👋 مرحباً، ${user.email} — <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
-          </div>
-        `);
-      }
-    });
+  if (user) {
+    // Hide signup & login forms
+    document.querySelector('#signup').style.display = 'none';
+    document.querySelector('#login').style.display = 'none';
+
+    // Show member content
+    document.body.insertAdjacentHTML('afterbegin', `
+      <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
+        👋 مرحباً، ${user.email} — 
+        <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
+      </div>
+
+      <div class="section" id="member-area">
+        <h2>لوحة العضو</h2>
+        <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
+      </div>
+    `);
+  }
+});
+
 
     function logout() {
       auth.signOut().then(() => {
