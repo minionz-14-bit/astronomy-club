@@ -1,11 +1,204 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="rtl">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Syrian Youth Astronomy Club</title>
+
+  <!-- Fonts: Poppins + Lateef -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    input {
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button {
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #d4c18f;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background-color: #014421;
+      color: #C2B280;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    .logo {
+      max-width: 138px;
+      margin-bottom: 1rem;
+    }
+
+    .slogan {
+      font-size: 2rem;
+      font-family: 'Lateef', 'Amiri', 'Arial', serif;
+      font-weight: 700;
+      line-height: 3rem;
+      text-align: center;
+    }
+
+    .section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 {
+      border-bottom: 2px solid #C2B280;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    p {
+      line-height: 1.8rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 2rem 1rem 1rem;
+      color: #C2B280aa;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the Syrian Youth Astronomy Club</h1>
-  <p>Exploring the skies, together.</p>
+  <header>
+    <img src="falcon.png" alt="Club Logo" class="logo">
+    <div class="slogan">يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ... حُرُوفَ الحُرِّيَّةِ فِي صَفْحَةِ السَّمَاءِ</div>
+    <div style="margin-top: 1rem;">
+      <a href="#signup" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">إنشاء حساب</a>
+      <a href="#login" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">تسجيل دخول</a>
+    </div>
+  </header>
+
+  <div class="section">
+    <h2>من نحن</h2>
+    <p>
+      نادي الشباب السوري للفلك هو مساحة يجتمع فيها الفلكيون الهواة والمحترفون لتبادل الأفكار، نشر المعرفة، ومشاركة حب السماء والكون. نهدف إلى بناء مجتمع فلكي نشط، مدعوم بالعلم والشغف.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>أهدافنا</h2>
+    <p>
+      - تعزيز الوعي الفلكي بين الشباب.<br>
+      - تنظيم فعاليات، ورشات، ورصدات جماعية.<br>
+      - دعم الأبحاث والمشاريع الفلكية المحلية.<br>
+      - بناء شبكة تواصل بين الفلكيين السوريين.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>شارك معنا</h2>
+    <p>
+      إذا كنت مهتماً بالفلك، سواء كنت هاوٍ أو مختص، فإننا نرحب بك للانضمام إلى مجتمعنا. قريباً سنوفر منصة للمشاركة بالمقالات، الصور، والمشاريع.
+    </p>
+  </div>
+
+  <div class="section" id="signup">
+    <h2>إنشاء حساب</h2>
+    <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
+      <input type="text" placeholder="اسم المستخدم" required style="padding: 0.5rem;">
+      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;">
+      <button style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">تسجيل</button>
+    </form>
+  </div>
+
+  <div class="section" id="login">
+    <h2>تسجيل الدخول</h2>
+    <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
+      <input type="text" placeholder="اسم المستخدم" required style="padding: 0.5rem;">
+      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;">
+      <button style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">دخول</button>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2025 نادي الشباب السوري للفلك — جميع الحقوق محفوظة
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
+      authDomain: "syrianyouthastro.firebaseapp.com",
+      projectId: "syrianyouthastro",
+      storageBucket: "syrianyouthastro.firebasestorage.app",
+      messagingSenderId: "105047646564",
+      appId: "1:105047646564:web:7901e202f6467b0b745a71"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+
+    // Handle Sign Up
+    document.querySelector('#signup form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = e.target[0].value;
+      const password = e.target[1].value;
+
+      try {
+        await auth.createUserWithEmailAndPassword(email, password);
+        alert("✅ تم إنشاء الحساب بنجاح!");
+      } catch (error) {
+        alert("❌ خطأ: " + error.message);
+      }
+    });
+
+    // Handle Login
+    document.querySelector('#login form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = e.target[0].value;
+      const password = e.target[1].value;
+
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        alert("✅ تم تسجيل الدخول!");
+      } catch (error) {
+        alert("❌ خطأ: " + error.message);
+      }
+    });
+
+    // Show a welcome message if logged in
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        document.body.insertAdjacentHTML('afterbegin', `
+          <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
+            👋 مرحباً، ${user.email} — <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
+          </div>
+        `);
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => {
+        location.reload();
+      });
+    }
+  </script>
+
 </body>
 </html>
