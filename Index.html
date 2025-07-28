@@ -396,72 +396,72 @@
     }
 
     // Listen for chat messages in realtime and render
-    function listenToChatMessages() {
-      const chatMessagesList = document.getElementById('chat-messages');
+function listenToChatMessages() {
+  const chatMessagesList = document.getElementById('chat-messages');
 
-      db.collection('chat_messages')
-        .orderBy('timestamp', 'asc')
-        .onSnapshot((snapshot) => {
-          chatMessagesList.innerHTML = ''; // Clear current messages
+  db.collection('chat_messages')
+    .orderBy('timestamp', 'asc')
+    .onSnapshot(
+      (snapshot) => {
+        console.log('Chat snapshot size:', snapshot.size);
 
-          snapshot.forEach((doc) => {
-            const msg = doc.data();
-            const li = document.createElement('li');
+        chatMessagesList.innerHTML = '';
 
-            li.innerHTML = `
-              <div class="author">${escapeHtml(msg.email)}</div>
-              <div class="timestamp">${formatTimestamp(msg.timestamp)}</div>
-              <div class="content">${escapeHtml(msg.text)}</div>
-            `;
-            chatMessagesList.appendChild(li);
-          });
+        snapshot.forEach((doc) => {
+          const msg = doc.data();
 
-          // Scroll to bottom
-          chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+          console.log('Chat message:', msg);
+
+          if (!msg.text || !msg.email) return;
+
+          const timestampFormatted = msg.timestamp
+            ? formatTimestamp(msg.timestamp)
+            : 'الوقت غير متوفر';
+
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <div class="author">${escapeHtml(msg.email)}</div>
+            <div class="timestamp">${timestampFormatted}</div>
+            <div class="content">${escapeHtml(msg.text)}</div>
+          `;
+          chatMessagesList.appendChild(li);
         });
 
-      // Handle new chat form submit
-      const chatForm = document.getElementById('chat-form');
-      chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('chat-input');
-        const text = input.value.trim();
-        const user = auth.currentUser;
+        chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+      },
+      (error) => {
+        console.error('Error listening to chat messages:', error);
+      }
+    );
 
-        if (!text) return alert('❗ الرجاء كتابة رسالة.');
+  // Chat form submit handler (unchanged)
+  const chatForm = document.getElementById('chat-form');
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    const user = auth.currentUser;
 
-        if (!user) {
-          alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
-          return;
-        }
+    if (!text) return alert('❗ الرجاء كتابة رسالة.');
 
-        try {
-          await db.collection('chat_messages').add({
-            userId: user.uid,
-            email: user.email,
-            text: text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-          input.value = '';
-        } catch (error) {
-          alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
-        }
-      });
+    if (!user) {
+      alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
+      return;
     }
 
-    // Simple function to prevent XSS by escaping HTML special chars
-    function escapeHtml(text) {
-      const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;',
-      };
-      return text.replace(/[&<>"']/g, function (m) {
-        return map[m];
+    try {
+      await db.collection('chat_messages').add({
+        userId: user.uid,
+        email: user.email,
+        text: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
+      input.value = '';
+    } catch (error) {
+      alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
     }
+  });
+}
   </script>
 </body>
 </html>
