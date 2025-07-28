@@ -381,6 +381,15 @@
 
     // CHAT SYSTEM
 
+    // CHAT SYSTEM
+
+    // Function to escape HTML (protect from XSS)
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     // Function to format timestamp nicely (e.g. "12:30 PM, 28-07-2025")
     function formatTimestamp(timestamp) {
       if (!timestamp) return '';
@@ -396,72 +405,70 @@
     }
 
     // Listen for chat messages in realtime and render
-function listenToChatMessages() {
-  const chatMessagesList = document.getElementById('chat-messages');
+    function listenToChatMessages() {
+      const chatMessagesList = document.getElementById('chat-messages');
 
-  db.collection('chat_messages')
-    .orderBy('timestamp', 'asc')
-    .onSnapshot(
-      (snapshot) => {
-        console.log('Chat snapshot size:', snapshot.size);
+      db.collection('chat_messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(
+          (snapshot) => {
+            console.log('Chat snapshot size:', snapshot.size);
+            chatMessagesList.innerHTML = '';
 
-        chatMessagesList.innerHTML = '';
+            snapshot.forEach((doc) => {
+              const msg = doc.data();
+              console.log('Chat message:', msg);
 
-        snapshot.forEach((doc) => {
-          const msg = doc.data();
+              if (!msg.text || !msg.email) return;
 
-          console.log('Chat message:', msg);
+              const timestampFormatted = msg.timestamp
+                ? formatTimestamp(msg.timestamp)
+                : 'الوقت غير متوفر';
 
-          if (!msg.text || !msg.email) return;
+              const li = document.createElement('li');
+              li.innerHTML = `
+                <div class="author">${escapeHtml(msg.email)}</div>
+                <div class="timestamp">${timestampFormatted}</div>
+                <div class="content">${escapeHtml(msg.text)}</div>
+              `;
+              chatMessagesList.appendChild(li);
+            });
 
-          const timestampFormatted = msg.timestamp
-            ? formatTimestamp(msg.timestamp)
-            : 'الوقت غير متوفر';
+            chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+          },
+          (error) => {
+            console.error('Error listening to chat messages:', error);
+          }
+        );
 
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <div class="author">${escapeHtml(msg.email)}</div>
-            <div class="timestamp">${timestampFormatted}</div>
-            <div class="content">${escapeHtml(msg.text)}</div>
-          `;
-          chatMessagesList.appendChild(li);
-        });
+      // Chat form submit handler
+      const chatForm = document.getElementById('chat-form');
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        const user = auth.currentUser;
 
-        chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
-      },
-      (error) => {
-        console.error('Error listening to chat messages:', error);
-      }
-    );
+        if (!text) return alert('❗ الرجاء كتابة رسالة.');
+        if (!user) {
+          alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
+          return;
+        }
 
-  // Chat form submit handler (unchanged)
-  const chatForm = document.getElementById('chat-form');
-  chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('chat-input');
-    const text = input.value.trim();
-    const user = auth.currentUser;
-
-    if (!text) return alert('❗ الرجاء كتابة رسالة.');
-
-    if (!user) {
-      alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
-      return;
-    }
-
-    try {
-      await db.collection('chat_messages').add({
-        userId: user.uid,
-        email: user.email,
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        try {
+          await db.collection('chat_messages').add({
+            userId: user.uid,
+            email: user.email,
+            text: text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+          input.value = '';
+        } catch (error) {
+          alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
+        }
       });
-      input.value = '';
-    } catch (error) {
-      alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
     }
-  });
-}
+
   </script>
 </body>
 </html>
