@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Syrian Youth Astronomy Club</title>
 
   <!-- Fonts: Poppins + Lateef -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Poppins:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
-    input {
+    input,
+    textarea {
       font-size: 1rem;
       border: none;
       border-radius: 4px;
+      padding: 0.5rem;
+      font-family: 'Poppins', Arial, sans-serif;
     }
 
     button {
@@ -22,6 +28,7 @@
       border-radius: 4px;
       cursor: pointer;
       transition: background 0.3s ease;
+      font-family: 'Poppins', Arial, sans-serif;
     }
 
     button:hover {
@@ -32,7 +39,7 @@
       margin: 0;
       font-family: 'Poppins', Arial, sans-serif;
       background-color: #014421;
-      color: #C2B280;
+      color: #c2b280;
     }
 
     header {
@@ -60,7 +67,7 @@
     }
 
     h2 {
-      border-bottom: 2px solid #C2B280;
+      border-bottom: 2px solid #c2b280;
       padding-bottom: 0.5rem;
       margin-bottom: 1rem;
       font-weight: bold;
@@ -74,14 +81,87 @@
       text-align: center;
       font-size: 0.9rem;
       padding: 2rem 1rem 1rem;
-      color: #C2B280aa;
+      color: #c2b280aa;
+    }
+
+    /* Chat Styles */
+    #chat-area {
+      background: #023615;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 2rem;
+      max-height: 400px;
+      overflow-y: auto;
+      color: #dcd6b8;
+      font-size: 0.95rem;
+      box-shadow: inset 0 0 10px #011b0f;
+    }
+
+    #chat-messages {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    #chat-messages li {
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #2a3a23;
+      padding-bottom: 0.5rem;
+    }
+
+    #chat-messages li .author {
+      font-weight: bold;
+      color: #c2b280;
+      margin-bottom: 0.2rem;
+    }
+
+    #chat-messages li .timestamp {
+      font-size: 0.75rem;
+      color: #889977aa;
+      float: left;
+    }
+
+    #chat-form textarea {
+      width: 100%;
+      min-height: 70px;
+      resize: vertical;
+      background-color: #0b3b11;
+      color: #c2b280;
+      border: 1px solid #2e5d22;
+    }
+
+    #chat-form button {
+      margin-top: 0.5rem;
+      padding: 0.7rem;
+      background-color: #c2b280;
+      color: #014421;
+      font-weight: bold;
+    }
+
+    #user-bar {
+      text-align: center;
+      padding: 1rem;
+      background-color: #c2b280;
+      color: #014421;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    #user-bar button {
+      margin-right: 0;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="falcon.png" alt="Club Logo" class="logo">
-    <div class="slogan">يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ... حُرُوفَ الحُرِّيَّةِ فِي صَفْحَةِ السَّمَاءِ</div>
+    <img src="falcon.png" alt="Club Logo" class="logo" />
+    <div class="slogan">
+      يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ... حُرُوفَ الحُرِّيَّةِ فِي صَفْحَةِ السَّمَاءِ
+    </div>
     <div style="margin-top: 1rem;">
       <a href="#signup" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">إنشاء حساب</a>
       <a href="#login" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">تسجيل دخول</a>
@@ -98,9 +178,9 @@
   <div class="section">
     <h2>أهدافنا</h2>
     <p>
-      - تعزيز الوعي الفلكي بين الشباب.<br>
-      - تنظيم فعاليات، ورشات، ورصدات جماعية.<br>
-      - دعم الأبحاث والمشاريع الفلكية المحلية.<br>
+      - تعزيز الوعي الفلكي بين الشباب.<br />
+      - تنظيم فعاليات، ورشات، ورصدات جماعية.<br />
+      - دعم الأبحاث والمشاريع الفلكية المحلية.<br />
       - بناء شبكة تواصل بين الفلكيين السوريين.
     </p>
   </div>
@@ -115,18 +195,22 @@
   <div class="section" id="signup">
     <h2>إنشاء حساب</h2>
     <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="text" placeholder="اسم المستخدم" required style="padding: 0.5rem;">
-      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;">
-      <button style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">تسجيل</button>
+      <input type="email" placeholder="البريد الإلكتروني" required style="padding: 0.5rem;" />
+      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;" />
+      <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
+        تسجيل
+      </button>
     </form>
   </div>
 
   <div class="section" id="login">
     <h2>تسجيل الدخول</h2>
     <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="text" placeholder="اسم المستخدم" required style="padding: 0.5rem;">
-      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;">
-      <button style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">دخول</button>
+      <input type="email" placeholder="البريد الإلكتروني" required style="padding: 0.5rem;" />
+      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;" />
+      <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
+        دخول
+      </button>
     </form>
   </div>
 
@@ -147,7 +231,7 @@
       projectId: "syrianyouthastro",
       storageBucket: "syrianyouthastro.appspot.com",
       messagingSenderId: "105047646564",
-      appId: "1:105047646564:web:7901e202f6467b0b745a71"
+      appId: "1:105047646564:web:7901e202f6467b0b745a71",
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -156,6 +240,7 @@
     const storage = firebase.storage();
     const db = firebase.firestore();
 
+    // SIGNUP
     document.querySelector('#signup form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
@@ -168,6 +253,7 @@
       }
     });
 
+    // LOGIN
     document.querySelector('#login form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
@@ -180,34 +266,79 @@
       }
     });
 
+    // LOGOUT FUNCTION
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    // Render member area and chat after login
     auth.onAuthStateChanged((user) => {
       if (user) {
+        // Hide signup/login sections
         document.querySelector('#signup').style.display = 'none';
         document.querySelector('#login').style.display = 'none';
 
-        document.body.insertAdjacentHTML('afterbegin', `
-          <div style="text-align:center; padding: 1rem; background-color: #C2B280; color: #014421;">
-            👋 مرحباً، ${user.email} — 
-            <button onclick="logout()" style="margin-right: 1rem;">تسجيل الخروج</button>
-          </div>
-
-          <div class="section" id="member-area">
-            <h2>لوحة العضو</h2>
-            <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-
-            <div class="section" id="upload-area">
-              <h2>📸 مشاركة صورة فلكية</h2>
-              <form id="upload-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                <input type="text" id="astro-title" placeholder="عنوان للصورة" required style="padding: 0.5rem;">
-                <input type="file" id="astro-file" accept="image/*" required>
-                <button type="submit" style="padding: 0.7rem; background-color: #C2B280; color: #014421; font-weight: bold;">رفع</button>
-              </form>
+        // Insert user bar and member area (only once)
+        if (!document.querySelector('#user-bar')) {
+          document.body.insertAdjacentHTML(
+            'afterbegin',
+            `
+            <div id="user-bar">
+              👋 مرحباً، ${user.email} — 
+              <button onclick="logout()">تسجيل الخروج</button>
             </div>
-          </div>
-        `);
+
+            <div class="section" id="member-area">
+              <h2>لوحة العضو</h2>
+              <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
+
+              <div class="section" id="upload-area">
+                <h2>📸 مشاركة صورة فلكية</h2>
+                <form id="upload-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <input
+                    type="text"
+                    id="astro-title"
+                    placeholder="عنوان للصورة"
+                    required
+                    style="padding: 0.5rem;"
+                  />
+                  <input type="file" id="astro-file" accept="image/*" required />
+                  <button
+                    type="submit"
+                    style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;"
+                  >
+                    رفع
+                  </button>
+                </form>
+              </div>
+
+              <!-- New Chat System -->
+              <div class="section" id="chat-section">
+                <h2>💬 دردشة النادي</h2>
+                <ul id="chat-messages"></ul>
+                <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <textarea
+                    id="chat-input"
+                    placeholder="شارك أفكارك أو إعلاناتك هنا..."
+                    required
+                  ></textarea>
+                  <button type="submit">إرسال</button>
+                </form>
+              </div>
+            </div>
+          `
+          );
+
+          // Start listening to chat messages
+          listenToChatMessages();
+        }
+      } else {
+        // User logged out: reload page to reset UI
+        // (Or you could show login/signup sections)
       }
     });
 
+    // Handle astro photo upload
     document.addEventListener('submit', async (e) => {
       if (e.target && e.target.id === 'upload-form') {
         e.preventDefault();
@@ -218,33 +349,118 @@
         const user = auth.currentUser;
 
         if (!file || !title || !user) {
-          alert("❗ كل الحقول مطلوبة.");
+          alert('❗ كل الحقول مطلوبة.');
           return;
         }
 
         const storageRef = storage.ref().child(`astro_uploads/${user.uid}/${file.name}`);
         const uploadTask = storageRef.put(file);
 
-        uploadTask.on('state_changed', null, (error) => {
-          alert("❌ حدث خطأ في رفع الملف: " + error.message);
-        }, async () => {
-          const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-          await db.collection("astro_posts").add({
-            userId: user.uid,
-            email: user.email,
-            title: title,
-            imageUrl: downloadURL,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          alert("✅ تم رفع الصورة بنجاح!");
-          fileInput.value = '';
-          titleInput.value = '';
-        });
+        uploadTask.on(
+          'state_changed',
+          null,
+          (error) => {
+            alert('❌ حدث خطأ في رفع الملف: ' + error.message);
+          },
+          async () => {
+            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+            await db.collection('astro_posts').add({
+              userId: user.uid,
+              email: user.email,
+              title: title,
+              imageUrl: downloadURL,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+            alert('✅ تم رفع الصورة بنجاح!');
+            fileInput.value = '';
+            titleInput.value = '';
+          }
+        );
       }
     });
 
-    function logout() {
-      auth.signOut().then(() => location.reload());
+    // CHAT SYSTEM
+
+    // Function to format timestamp nicely (e.g. "12:30 PM, 28-07-2025")
+    function formatTimestamp(timestamp) {
+      if (!timestamp) return '';
+      const date = timestamp.toDate();
+      return date.toLocaleString('ar-EG', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour12: true,
+      });
+    }
+
+    // Listen for chat messages in realtime and render
+    function listenToChatMessages() {
+      const chatMessagesList = document.getElementById('chat-messages');
+
+      db.collection('chat_messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot((snapshot) => {
+          chatMessagesList.innerHTML = ''; // Clear current messages
+
+          snapshot.forEach((doc) => {
+            const msg = doc.data();
+            const li = document.createElement('li');
+
+            li.innerHTML = `
+              <div class="author">${escapeHtml(msg.email)}</div>
+              <div class="timestamp">${formatTimestamp(msg.timestamp)}</div>
+              <div class="content">${escapeHtml(msg.text)}</div>
+            `;
+            chatMessagesList.appendChild(li);
+          });
+
+          // Scroll to bottom
+          chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+        });
+
+      // Handle new chat form submit
+      const chatForm = document.getElementById('chat-form');
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        const user = auth.currentUser;
+
+        if (!text) return alert('❗ الرجاء كتابة رسالة.');
+
+        if (!user) {
+          alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
+          return;
+        }
+
+        try {
+          await db.collection('chat_messages').add({
+            userId: user.uid,
+            email: user.email,
+            text: text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+          input.value = '';
+        } catch (error) {
+          alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
+        }
+      });
+    }
+
+    // Simple function to prevent XSS by escaping HTML special chars
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      };
+      return text.replace(/[&<>"']/g, function (m) {
+        return map[m];
+      });
     }
   </script>
 </body>
