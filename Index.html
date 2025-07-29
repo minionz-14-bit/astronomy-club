@@ -287,6 +287,10 @@
             <div class="section" id="member-area">
               <h2>لوحة العضو</h2>
               <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
+<button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
+  اتريد ان تكون عضوا؟
+</button>
+
 
               <div class="section" id="upload-area">
                 <h2>📸 مشاركة صورة فلكية</h2>
@@ -438,6 +442,13 @@
         }
       });
     }
+document.body.addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'join-button') {
+    document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
   </script>
+<div id="bottom-target" style="margin-bottom: 50px;"></div>
 </body>
 </html>
