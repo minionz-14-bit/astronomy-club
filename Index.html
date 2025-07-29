@@ -297,16 +297,47 @@
 </button>
 
 
-              <div class="section" id="upload-area">
-                <h2>📸 مشاركة صورة فلكية</h2>
-                <form id="upload-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                  <input type="text" id="astro-title" placeholder="عنوان للصورة" required style="padding: 0.5rem;" />
-                  <input type="file" id="astro-file" accept="image/*" required />
-                  <button type="submit" style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
-                    رفع
-                  </button>
-                </form>
-              </div>
+              <button id="upload_widget_opener">Upload Image or Video</button>
+
+<button id="upload_widget_opener">Upload Image or Video</button>
+
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+<script>
+  var myWidget = cloudinary.createUploadWidget({
+    cloudName: 'dpgkvqpef',
+    uploadPreset: 'unsigned_preset',
+    multiple: true,
+    sources: ['local', 'url', 'camera'],
+    resourceType: 'auto'
+  }, async (error, result) => {
+    if (!error && result && result.event === "success") {
+      const fileUrl = result.info.secure_url;
+      console.log('Uploaded file info:', result.info);
+
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
+        return;
+      }
+
+      try {
+        await firebase.firestore().collection("users").doc(user.uid).set({
+          mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+        }, { merge: true });
+
+        alert('✅ تم رفع الملف وحفظه بنجاح!');
+      } catch (err) {
+        console.error("Error saving to Firestore:", err);
+        alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
+      }
+    }
+  });
+
+  document.getElementById("upload_widget_opener").addEventListener("click", function () {
+    myWidget.open();
+  }, false);
+</script>
+
 
               <div class="section" id="chat-section">
                 <h2>💬 دردشة النادي</h2>
