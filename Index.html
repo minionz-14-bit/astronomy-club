@@ -22,6 +22,7 @@
       border-radius: 4px;
       padding: 0.5rem;
       font-family: 'Poppins', Arial, sans-serif;
+      box-sizing: border-box;
     }
 
     button {
@@ -76,6 +77,7 @@
 
     p {
       line-height: 1.8rem;
+      margin: 1rem 0;
     }
 
     footer {
@@ -129,6 +131,7 @@
       background-color: #0b3b11;
       color: #c2b280;
       border: 1px solid #2e5d22;
+      box-sizing: border-box;
     }
 
     #chat-form button {
@@ -156,6 +159,15 @@
       margin-right: 0;
     }
   </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 </head>
 <body>
   <header>
@@ -201,8 +213,8 @@
   <div class="section" id="signup">
     <h2>إنشاء حساب</h2>
     <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="email" placeholder="البريد الإلكتروني" required style="padding: 0.5rem;" />
-      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;" />
+      <input type="email" placeholder="البريد الإلكتروني" required />
+      <input type="password" placeholder="كلمة المرور" required />
       <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
         تسجيل
       </button>
@@ -212,8 +224,8 @@
   <div class="section" id="login">
     <h2>تسجيل الدخول</h2>
     <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="email" placeholder="البريد الإلكتروني" required style="padding: 0.5rem;" />
-      <input type="password" placeholder="كلمة المرور" required style="padding: 0.5rem;" />
+      <input type="email" placeholder="البريد الإلكتروني" required />
+      <input type="password" placeholder="كلمة المرور" required />
       <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
         دخول
       </button>
@@ -224,13 +236,8 @@
     &copy; 2025 نادي الشباب السوري للفلك — جميع الحقوق محفوظة
   </footer>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
   <script>
+    // Firebase initialization
     const firebaseConfig = {
       apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
       authDomain: "syrianyouthastro.firebaseapp.com",
@@ -239,34 +246,59 @@
       messagingSenderId: "105047646564",
       appId: "1:105047646564:web:7901e202f6467b0b745a71"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const storage = firebase.storage();
     const db = firebase.firestore();
 
-    document.querySelector('#signup form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = e.target[0].value;
-      const password = e.target[1].value;
-      try {
-        await auth.createUserWithEmailAndPassword(email, password);
-        alert("✅ تم إنشاء الحساب بنجاح!");
-      } catch (error) {
-        alert("❌ خطأ: " + error.message);
+    // Cloudinary widget setup
+    const cloudinaryWidget = cloudinary.createUploadWidget({
+      cloudName: 'dpgkvqpef',
+      uploadPreset: 'unsigned_preset',
+      multiple: true,
+      sources: ['local', 'url', 'camera'],
+      resourceType: 'auto'
+    }, async (error, result) => {
+      if (!error && result && result.event === "success") {
+        const fileUrl = result.info.secure_url;
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
+          return;
+        }
+        try {
+          await db.collection("users").doc(user.uid).set({
+            mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+          }, { merge: true });
+          alert('✅ تم رفع الملف وحفظه بنجاح!');
+        } catch (err) {
+          console.error("Error saving to Firestore:", err);
+          alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
+        }
       }
     });
 
-    document.querySelector('#login form').addEventListener('submit', async (e) => {
+    // Signup & Login
+    document.querySelector('#signup form').addEventListener('submit', async e => {
       e.preventDefault();
-      const email = e.target[0].value;
-      const password = e.target[1].value;
+      const [email, password] = e.target;
       try {
-        await auth.signInWithEmailAndPassword(email, password);
+        await auth.createUserWithEmailAndPassword(email.value, password.value);
+        alert("✅ تم إنشاء الحساب بنجاح!");
+      } catch (err) {
+        alert("❌ خطأ: " + err.message);
+      }
+    });
+
+    document.querySelector('#login form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const [email, password] = e.target;
+      try {
+        await auth.signInWithEmailAndPassword(email.value, password.value);
         alert("✅ تم تسجيل الدخول!");
-      } catch (error) {
-        alert("❌ خطأ: " + error.message);
+      } catch (err) {
+        alert("❌ خطأ: " + err.message);
       }
     });
 
@@ -274,114 +306,58 @@
       auth.signOut().then(() => location.reload());
     }
 
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        document.querySelector('#signup').style.display = 'none';
-        document.querySelector('#login').style.display = 'none';
+    auth.onAuthStateChanged(user => {
+      if (!user) return;
+      document.getElementById('signup').style.display = 'none';
+      document.getElementById('login').style.display = 'none';
 
-        if (!document.getElementById('user-bar')) {
-          document.body.insertAdjacentHTML('afterbegin', `
-            <div id="user-bar">
-              👋 مرحباً، ${user.email} — 
-              <button onclick="logout()">تسجيل الخروج</button>
-            </div>
+      if (document.getElementById('user-bar')) return;
 
-            <div class="section" id="member-area">
-              <h2>الإستقبال</h2>
-              <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-              <button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
-                اتريد ان تكون عضوا؟
-              </button>
-              <button id="upload_widget_opener">Upload Image or Video</button>
+      document.body.insertAdjacentHTML('afterbegin', `
+        <div id="user-bar">
+          👋 مرحباً، ${user.email} — 
+          <button onclick="logout()">تسجيل الخروج</button>
+          <button id="upload_widget_opener">Upload Image or Video</button>
+        </div>
+        <div class="section" id="member-area">
+          <h2>الإستقبال</h2>
+          <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
+          <button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
+            اتريد ان تكون عضوا؟
+          </button>
+          <div class="section" id="chat-section">
+            <h2>💬 دردشة النادي</h2>
+            <div id="chat-area"><ul id="chat-messages"></ul></div>
+            <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
+              <button type="submit">إرسال</button>
+            </form>
+          </div>
+        </div>
+      `);
 
-              <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
-              <script>
-                var myWidget = cloudinary.createUploadWidget({
-                  cloudName: 'dpgkvqpef',
-                  uploadPreset: 'unsigned_preset',
-                  multiple: true,
-                  sources: ['local', 'url', 'camera'],
-                  resourceType: 'auto'
-                }, async (error, result) => {
-                  if (!error && result && result.event === "success") {
-                    const fileUrl = result.info.secure_url;
-                    const user = firebase.auth().currentUser;
-                    if (!user) {
-                      alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
-                      return;
-                    }
-                    try {
-                      await firebase.firestore().collection("users").doc(user.uid).set({
-                        mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
-                      }, { merge: true });
-                      alert('✅ تم رفع الملف وحفظه بنجاح!');
-                    } catch (err) {
-                      console.error("Error saving to Firestore:", err);
-                      alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
-                    }
-                  }
-                });
+      document.getElementById("upload_widget_opener")
+        .addEventListener("click", () => cloudinaryWidget.open(), false);
 
-                document.getElementById("upload_widget_opener").addEventListener("click", function () {
-                  myWidget.open();
-                }, false);
-              </script>
-
-              <div class="section" id="chat-section">
-                <h2>💬 دردشة النادي</h2>
-                <div id="chat-area">
-                  <ul id="chat-messages"></ul>
-                </div>
-                <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                  <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
-                  <button type="submit">إرسال</button>
-                </form>
-              </div>
-            </div>
-          `);
-
-          listenToChatMessages();
-        }
-      }
+      listenToChatMessages();
     });
 
-    document.addEventListener('submit', async (e) => {
-      if (e.target && e.target.id === 'upload-form') {
-        e.preventDefault();
-        const fileInput = document.getElementById('astro-file');
-        const titleInput = document.getElementById('astro-title');
-        const file = fileInput.files[0];
-        const title = titleInput.value;
-        const user = auth.currentUser;
-
-        if (!file || !title || !user) {
-          alert('❗ كل الحقول مطلوبة.');
-          return;
-        }
-
-        const storageRef = storage.ref().child(`astro_uploads/${user.uid}/${file.name}`);
-        const uploadTask = storageRef.put(file);
-
-        uploadTask.on(
-          'state_changed',
-          null,
-          (error) => {
-            alert('❌ حدث خطأ في رفع الملف: ' + error.message);
-          },
-          async () => {
-            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-            await db.collection('astro_posts').add({
-              userId: user.uid,
-              email: user.email,
-              title: title,
-              imageUrl: downloadURL,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            alert('✅ تم رفع الصورة بنجاح!');
-            fileInput.value = '';
-            titleInput.value = '';
-          }
-        );
+    // Handle chat messages
+    document.getElementById('chat-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const text = document.getElementById('chat-input').value.trim();
+      const user = auth.currentUser;
+      if (!text || !user) return alert('❗ الرجاء كتابة رسالة وتسجيل الدخول.');
+      try {
+        await db.collection('chat_messages').add({
+          userId: user.uid,
+          email: user.email,
+          text,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById('chat-input').value = '';
+      } catch (err) {
+        alert('❌ خطأ أثناء إرسال الرسالة: ' + err.message);
       }
     });
 
@@ -395,37 +371,35 @@
       if (!timestamp) return '';
       const date = timestamp.toDate();
       return date.toLocaleString('ar-EG', {
-        hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', hour12: true
+        hour: '2-digit', minute: '2-digit',
+        day: '2-digit', month: '2-digit',
+        year: 'numeric', hour12: true
       });
     }
 
     function listenToChatMessages() {
-      const chatMessagesList = document.getElementById('chat-messages');
-
+      const chatList = document.getElementById('chat-messages');
       db.collection('chat_messages')
         .orderBy('timestamp', 'asc')
-        .onSnapshot((snapshot) => {
-          chatMessagesList.innerHTML = '';
-          snapshot.forEach((doc) => {
-            const msg = doc.data();
-            if (!msg.text || !msg.email) return;
-            const timestampFormatted = msg.timestamp ? formatTimestamp(msg.timestamp) : 'الوقت غير متوفر';
+        .onSnapshot(snap => {
+          chatList.innerHTML = '';
+          snap.forEach(doc => {
+            const m = doc.data();
             const li = document.createElement('li');
             li.innerHTML = `
-              <div class="author">${escapeHtml(msg.email)}</div>
-              <div class="timestamp">${timestampFormatted}</div>
-              <div class="content">${escapeHtml(msg.text)}</div>
+              <div class="author">${escapeHtml(m.email)}</div>
+              <div class="timestamp">${m.timestamp ? formatTimestamp(m.timestamp) : ''}</div>
+              <div class="content">${escapeHtml(m.text)}</div>
             `;
-            chatMessagesList.appendChild(li);
+            chatList.appendChild(li);
           });
-          chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
-        }, (error) => {
-          console.error('Error listening to chat messages:', error);
-        });
+          chatList.scrollTop = chatList.scrollHeight;
+        }, err => console.error('Chat load error:', err));
     }
 
-    document.body.addEventListener('click', (e) => {
-      if (e.target && e.target.id === 'join-button') {
+    // Smooth scroll for join button
+    document.body.addEventListener('click', e => {
+      if (e.target.id === 'join-button') {
         document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
       }
     });
