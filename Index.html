@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Syrian Youth Astronomy Club</title>
-<link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Fonts: Poppins + Lateef -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -164,10 +164,10 @@
       يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ... حُرُوفَ الحُرِّيَّةِ فِي صَفْحَةِ السَّمَاءِ
     </div>
     <div style="margin-top: 1rem;">
-  <a href="#signup" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">إنشاء حساب</a>
-  <a href="#login" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">تسجيل دخول</a>
-  <a href="nathariyat.html" style="color:#C2B280; margin: 0 1rem; text-decoration: underline; font-size: 1.2rem;">📚 نظريات</a>
-</div>
+      <a href="#signup" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">إنشاء حساب</a>
+      <a href="#login" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">تسجيل دخول</a>
+      <a href="nathariyat.html" style="color:#C2B280; margin: 0 1rem; text-decoration: underline; font-size: 1.2rem;">📚 نظريات</a>
+    </div>
   </header>
 
   <div class="section">
@@ -193,9 +193,8 @@
       إذا كنت مهتماً بالفلك، سواء كنت هاوٍ أو مختص، فإننا نرحب بك للانضمام إلى مجتمعنا.
       <br /><br />
       <a href="apply.html" style="color: #d4c18f; text-decoration: underline; font-size: 1.5rem;">
-  📩 اضغط هنا لتقديم طلب الانضمام
-</a>
-
+        📩 اضغط هنا لتقديم طلب الانضمام
+      </a>
     </p>
   </div>
 
@@ -238,7 +237,7 @@
       projectId: "syrianyouthastro",
       storageBucket: "syrianyouthastro.appspot.com",
       messagingSenderId: "105047646564",
-      appId: "1:105047646564:web:7901e202f6467b0b745a71",
+      appId: "1:105047646564:web:7901e202f6467b0b745a71"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -280,10 +279,8 @@
         document.querySelector('#signup').style.display = 'none';
         document.querySelector('#login').style.display = 'none';
 
-        if (!document.querySelector('#user-bar')) {
-          document.body.insertAdjacentHTML(
-            'afterbegin',
-            `
+        if (!document.getElementById('user-bar')) {
+          document.body.insertAdjacentHTML('afterbegin', `
             <div id="user-bar">
               👋 مرحباً، ${user.email} — 
               <button onclick="logout()">تسجيل الخروج</button>
@@ -292,59 +289,48 @@
             <div class="section" id="member-area">
               <h2>الإستقبال</h2>
               <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-<button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
-  اتريد ان تكون عضوا؟
-</button>
-
-
+              <button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
+                اتريد ان تكون عضوا؟
+              </button>
               <button id="upload_widget_opener">Upload Image or Video</button>
 
-<button id="upload_widget_opener">Upload Image or Video</button>
+              <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+              <script>
+                var myWidget = cloudinary.createUploadWidget({
+                  cloudName: 'dpgkvqpef',
+                  uploadPreset: 'unsigned_preset',
+                  multiple: true,
+                  sources: ['local', 'url', 'camera'],
+                  resourceType: 'auto'
+                }, async (error, result) => {
+                  if (!error && result && result.event === "success") {
+                    const fileUrl = result.info.secure_url;
+                    const user = firebase.auth().currentUser;
+                    if (!user) {
+                      alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
+                      return;
+                    }
+                    try {
+                      await firebase.firestore().collection("users").doc(user.uid).set({
+                        mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+                      }, { merge: true });
+                      alert('✅ تم رفع الملف وحفظه بنجاح!');
+                    } catch (err) {
+                      console.error("Error saving to Firestore:", err);
+                      alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
+                    }
+                  }
+                });
 
-<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-<script>
-  var myWidget = cloudinary.createUploadWidget({
-    cloudName: 'dpgkvqpef',
-    uploadPreset: 'unsigned_preset',
-    multiple: true,
-    sources: ['local', 'url', 'camera'],
-    resourceType: 'auto'
-  }, async (error, result) => {
-    if (!error && result && result.event === "success") {
-      const fileUrl = result.info.secure_url;
-      console.log('Uploaded file info:', result.info);
-
-      const user = firebase.auth().currentUser;
-      if (!user) {
-        alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
-        return;
-      }
-
-      try {
-        await firebase.firestore().collection("users").doc(user.uid).set({
-          mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
-        }, { merge: true });
-
-        alert('✅ تم رفع الملف وحفظه بنجاح!');
-      } catch (err) {
-        console.error("Error saving to Firestore:", err);
-        alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
-      }
-    }
-  });
-
-  document.getElementById("upload_widget_opener").addEventListener("click", function () {
-    myWidget.open();
-  }, false);
-</script>
-
+                document.getElementById("upload_widget_opener").addEventListener("click", function () {
+                  myWidget.open();
+                }, false);
+              </script>
 
               <div class="section" id="chat-section">
                 <h2>💬 دردشة النادي</h2>
                 <div id="chat-area">
-<div id="chat-area">
-  <ul id="chat-messages"></ul>
-</div>
+                  <ul id="chat-messages"></ul>
                 </div>
                 <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
                   <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
@@ -352,8 +338,7 @@
                 </form>
               </div>
             </div>
-          `
-          );
+          `);
 
           listenToChatMessages();
         }
@@ -390,7 +375,7 @@
               email: user.email,
               title: title,
               imageUrl: downloadURL,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             alert('✅ تم رفع الصورة بنجاح!');
             fileInput.value = '';
@@ -410,12 +395,7 @@
       if (!timestamp) return '';
       const date = timestamp.toDate();
       return date.toLocaleString('ar-EG', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour12: true,
+        hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', hour12: true
       });
     }
 
@@ -424,67 +404,33 @@
 
       db.collection('chat_messages')
         .orderBy('timestamp', 'asc')
-        .onSnapshot(
-          (snapshot) => {
-            chatMessagesList.innerHTML = '';
-
-            snapshot.forEach((doc) => {
-              const msg = doc.data();
-              if (!msg.text || !msg.email) return;
-
-              const timestampFormatted = msg.timestamp
-                ? formatTimestamp(msg.timestamp)
-                : 'الوقت غير متوفر';
-
-              const li = document.createElement('li');
-              li.innerHTML = `
-                <div class="author">${escapeHtml(msg.email)}</div>
-                <div class="timestamp">${timestampFormatted}</div>
-                <div class="content">${escapeHtml(msg.text)}</div>
-              `;
-              chatMessagesList.appendChild(li);
-            });
-
-            chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
-          },
-          (error) => {
-            console.error('Error listening to chat messages:', error);
-          }
-        );
-
-      const chatForm = document.getElementById('chat-form');
-      chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('chat-input');
-        const text = input.value.trim();
-        const user = auth.currentUser;
-
-        if (!text) return alert('❗ الرجاء كتابة رسالة.');
-        if (!user) {
-          alert('❗ يجب تسجيل الدخول لإرسال الرسائل.');
-          return;
-        }
-
-        try {
-          await db.collection('chat_messages').add({
-            userId: user.uid,
-            email: user.email,
-            text: text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        .onSnapshot((snapshot) => {
+          chatMessagesList.innerHTML = '';
+          snapshot.forEach((doc) => {
+            const msg = doc.data();
+            if (!msg.text || !msg.email) return;
+            const timestampFormatted = msg.timestamp ? formatTimestamp(msg.timestamp) : 'الوقت غير متوفر';
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <div class="author">${escapeHtml(msg.email)}</div>
+              <div class="timestamp">${timestampFormatted}</div>
+              <div class="content">${escapeHtml(msg.text)}</div>
+            `;
+            chatMessagesList.appendChild(li);
           });
-          input.value = '';
-        } catch (error) {
-          alert('❌ خطأ أثناء إرسال الرسالة: ' + error.message);
-        }
-      });
+          chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+        }, (error) => {
+          console.error('Error listening to chat messages:', error);
+        });
     }
-document.body.addEventListener('click', (e) => {
-  if (e.target && e.target.id === 'join-button') {
-    document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
-  }
-});
 
+    document.body.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'join-button') {
+        document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
   </script>
-<div id="bottom-target" style="margin-bottom: 50px;"></div>
+
+  <div id="bottom-target" style="margin-bottom: 50px;"></div>
 </body>
 </html>
