@@ -15,8 +15,7 @@
   />
 
   <style>
-    input,
-    textarea {
+    input, textarea {
       font-size: 1rem;
       border: none;
       border-radius: 4px;
@@ -24,7 +23,6 @@
       font-family: 'Poppins', Arial, sans-serif;
       box-sizing: border-box;
     }
-
     button {
       border: none;
       border-radius: 4px;
@@ -32,28 +30,15 @@
       transition: background 0.3s ease;
       font-family: 'Poppins', Arial, sans-serif;
     }
-
-    button:hover {
-      background-color: #d4c18f;
-    }
-
+    button:hover { background-color: #d4c18f; }
     body {
       margin: 0;
       font-family: 'Poppins', Arial, sans-serif;
       background-color: #014421;
       color: #c2b280;
     }
-
-    header {
-      text-align: center;
-      padding: 2rem 1rem 1rem;
-    }
-
-    .logo {
-      max-width: 138px;
-      margin-bottom: 1rem;
-    }
-
+    header { text-align: center; padding: 2rem 1rem 1rem; }
+    .logo { max-width: 138px; margin-bottom: 1rem; }
     .slogan {
       font-size: 2rem;
       font-family: 'Lateef', 'Amiri', 'Arial', serif;
@@ -61,32 +46,24 @@
       line-height: 3rem;
       text-align: center;
     }
-
     .section {
       max-width: 900px;
       margin: 2rem auto;
       padding: 0 1.5rem;
     }
-
     h2 {
       border-bottom: 2px solid #c2b280;
       padding-bottom: 0.5rem;
       margin-bottom: 1rem;
       font-weight: bold;
     }
-
-    p {
-      line-height: 1.8rem;
-      margin: 1rem 0;
-    }
-
+    p { line-height: 1.8rem; margin: 1rem 0; }
     footer {
       text-align: center;
       font-size: 0.9rem;
       padding: 2rem 1rem 1rem;
       color: #c2b280aa;
     }
-
     /* Chat Styles */
     #chat-area {
       background: #023615;
@@ -99,31 +76,26 @@
       font-size: 0.95rem;
       box-shadow: inset 0 0 10px #011b0f;
     }
-
     #chat-messages {
       list-style: none;
       padding: 0;
       margin: 0 0 1rem 0;
     }
-
     #chat-messages li {
       margin-bottom: 0.5rem;
       border-bottom: 1px solid #2a3a23;
       padding-bottom: 0.5rem;
     }
-
     #chat-messages li .author {
       font-weight: bold;
       color: #c2b280;
       margin-bottom: 0.2rem;
     }
-
     #chat-messages li .timestamp {
       font-size: 0.75rem;
       color: #889977aa;
       float: left;
     }
-
     #chat-form textarea {
       width: 100%;
       min-height: 70px;
@@ -133,7 +105,6 @@
       border: 1px solid #2e5d22;
       box-sizing: border-box;
     }
-
     #chat-form button {
       margin-top: 0.5rem;
       padding: 0.7rem;
@@ -141,7 +112,6 @@
       color: #014421;
       font-weight: bold;
     }
-
     #user-bar {
       text-align: center;
       padding: 1rem;
@@ -154,10 +124,7 @@
       gap: 1rem;
       flex-wrap: wrap;
     }
-
-    #user-bar button {
-      margin-right: 0;
-    }
+    #user-bar button { margin-right: 0; }
   </style>
 
   <!-- Firebase SDKs -->
@@ -237,7 +204,7 @@
   </footer>
 
   <script>
-    // Firebase initialization
+    // Firebase init
     const firebaseConfig = {
       apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
       authDomain: "syrianyouthastro.firebaseapp.com",
@@ -252,28 +219,25 @@
     const storage = firebase.storage();
     const db = firebase.firestore();
 
-    // Cloudinary widget setup
+    // Cloudinary widget
     const cloudinaryWidget = cloudinary.createUploadWidget({
       cloudName: 'dpgkvqpef',
       uploadPreset: 'unsigned_preset',
       multiple: true,
-      sources: ['local', 'url', 'camera'],
+      sources: ['local','url','camera'],
       resourceType: 'auto'
-    }, async (error, result) => {
-      if (!error && result && result.event === "success") {
-        const fileUrl = result.info.secure_url;
-        const user = firebase.auth().currentUser;
-        if (!user) {
-          alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
-          return;
-        }
+    }, async (err, res) => {
+      if (!err && res.event === "success") {
+        const fileUrl = res.info.secure_url;
+        const user = auth.currentUser;
+        if (!user) return alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
         try {
           await db.collection("users").doc(user.uid).set({
             mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
           }, { merge: true });
           alert('✅ تم رفع الملف وحفظه بنجاح!');
-        } catch (err) {
-          console.error("Error saving to Firestore:", err);
+        } catch (e) {
+          console.error(e);
           alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
         }
       }
@@ -283,34 +247,24 @@
     document.querySelector('#signup form').addEventListener('submit', async e => {
       e.preventDefault();
       const [email, password] = e.target;
-      try {
-        await auth.createUserWithEmailAndPassword(email.value, password.value);
-        alert("✅ تم إنشاء الحساب بنجاح!");
-      } catch (err) {
-        alert("❌ خطأ: " + err.message);
-      }
+      try { await auth.createUserWithEmailAndPassword(email.value, password.value);
+             alert("✅ تم إنشاء الحساب بنجاح!"); }
+      catch (e) { alert("❌ خطأ: " + e.message); }
     });
-
     document.querySelector('#login form').addEventListener('submit', async e => {
       e.preventDefault();
       const [email, password] = e.target;
-      try {
-        await auth.signInWithEmailAndPassword(email.value, password.value);
-        alert("✅ تم تسجيل الدخول!");
-      } catch (err) {
-        alert("❌ خطأ: " + err.message);
-      }
+      try { await auth.signInWithEmailAndPassword(email.value, password.value);
+             alert("✅ تم تسجيل الدخول!"); }
+      catch (e) { alert("❌ خطأ: " + e.message); }
     });
+    function logout() { auth.signOut().then(() => location.reload()); }
 
-    function logout() {
-      auth.signOut().then(() => location.reload());
-    }
-
+    // On auth change
     auth.onAuthStateChanged(user => {
       if (!user) return;
       document.getElementById('signup').style.display = 'none';
       document.getElementById('login').style.display = 'none';
-
       if (document.getElementById('user-bar')) return;
 
       document.body.insertAdjacentHTML('afterbegin', `
@@ -322,13 +276,13 @@
         <div class="section" id="member-area">
           <h2>الإستقبال</h2>
           <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-          <button id="join-button" style="padding: 0.5rem 1rem; background-color: #c2b280; color: #014421; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
+          <button id="join-button" style="padding:0.5rem 1rem;background:#c2b280;color:#014421;font-weight:bold;border-radius:4px;cursor:pointer;margin-top:1rem;">
             اتريد ان تكون عضوا؟
           </button>
           <div class="section" id="chat-section">
             <h2>💬 دردشة النادي</h2>
             <div id="chat-area"><ul id="chat-messages"></ul></div>
-            <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <form id="chat-form" style="display:flex;flex-direction:column;gap:0.5rem;">
               <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
               <button type="submit">إرسال</button>
             </form>
@@ -337,74 +291,53 @@
       `);
 
       document.getElementById("upload_widget_opener")
-        .addEventListener("click", () => cloudinaryWidget.open(), false);
+              .addEventListener("click", () => cloudinaryWidget.open(), false);
 
-      listenToChatMessages();
-    });
-
-    // Handle chat messages
-    document.getElementById('chat-form')?.addEventListener('submit', async e => {
-      e.preventDefault();
-      const text = document.getElementById('chat-input').value.trim();
-      const user = auth.currentUser;
-      if (!text || !user) return alert('❗ الرجاء كتابة رسالة وتسجيل الدخول.');
-      try {
-        await db.collection('chat_messages').add({
-          userId: user.uid,
-          email: user.email,
-          text,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        document.getElementById('chat-input').value = '';
-      } catch (err) {
-        alert('❌ خطأ أثناء إرسال الرسالة: ' + err.message);
-      }
-    });
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function formatTimestamp(timestamp) {
-      if (!timestamp) return '';
-      const date = timestamp.toDate();
-      return date.toLocaleString('ar-EG', {
-        hour: '2-digit', minute: '2-digit',
-        day: '2-digit', month: '2-digit',
-        year: 'numeric', hour12: true
+      // Chat send
+      document.getElementById('chat-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const text = document.getElementById('chat-input').value.trim();
+        if (!text) return;
+        try {
+          await db.collection('chat_messages').add({
+            userId: user.uid,
+            email: user.email,
+            text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          document.getElementById('chat-input').value = '';
+        } catch (e) {
+          alert('❌ خطأ أثناء إرسال الرسالة: ' + e.message);
+        }
       });
-    }
 
-    function listenToChatMessages() {
+      // Listen for messages
       const chatList = document.getElementById('chat-messages');
-      db.collection('chat_messages')
-        .orderBy('timestamp', 'asc')
+      db.collection('chat_messages').orderBy('timestamp','asc')
         .onSnapshot(snap => {
           chatList.innerHTML = '';
           snap.forEach(doc => {
             const m = doc.data();
             const li = document.createElement('li');
             li.innerHTML = `
-              <div class="author">${escapeHtml(m.email)}</div>
-              <div class="timestamp">${m.timestamp ? formatTimestamp(m.timestamp) : ''}</div>
-              <div class="content">${escapeHtml(m.text)}</div>
+              <div class="author">${m.email}</div>
+              <div class="timestamp">${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleString('ar-EG',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric',hour12:true}) : ''}</div>
+              <div class="content">${m.text}</div>
             `;
             chatList.appendChild(li);
           });
           chatList.scrollTop = chatList.scrollHeight;
-        }, err => console.error('Chat load error:', err));
-    }
+        }, err => console.error(err));
 
-    // Smooth scroll for join button
-    document.body.addEventListener('click', e => {
-      if (e.target.id === 'join-button') {
-        document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
-      }
+      // Smooth scroll
+      document.body.addEventListener('click', e => {
+        if (e.target.id === 'join-button') {
+          document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
+        }
+      });
     });
   </script>
 
-  <div id="bottom-target" style="margin-bottom: 50px;"></div>
+  <div id="bottom-target" style="margin-bottom:50px;"></div>
 </body>
 </html>
