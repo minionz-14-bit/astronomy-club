@@ -89,8 +89,8 @@
       background: #023615;
       border-radius: 6px;
       padding: 1rem;
-      margin-top: 2rem;
-      max-height: 400px;
+      margin-top: 1rem;
+      max-height: 250px;
       overflow-y: auto;
       color: #dcd6b8;
       font-size: 0.95rem;
@@ -104,7 +104,7 @@
     }
 
     #chat-messages li {
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       border-bottom: 1px solid #2a3a23;
       padding-bottom: 0.5rem;
     }
@@ -188,10 +188,10 @@
   <div class="section">
     <h2>شارك معنا</h2>
     <p>
-  إذا كنت مهتماً بالفلك، سواء كنت هاوٍ أو مختص، فإننا نرحب بك للانضمام إلى مجتمعنا.
-  <br /><br />
-  <a href="apply.html" style="color: #d4c18f; text-decoration: underline;">📩 اضغط هنا لتقديم طلب الانضمام</a>
-</p>
+      إذا كنت مهتماً بالفلك، سواء كنت هاوٍ أو مختص، فإننا نرحب بك للانضمام إلى مجتمعنا.
+      <br /><br />
+      <a href="apply.html" style="color: #d4c18f; text-decoration: underline;">📩 اضغط هنا لتقديم طلب الانضمام</a>
+    </p>
   </div>
 
   <div class="section" id="signup">
@@ -242,7 +242,6 @@
     const storage = firebase.storage();
     const db = firebase.firestore();
 
-    // SIGNUP
     document.querySelector('#signup form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
@@ -255,7 +254,6 @@
       }
     });
 
-    // LOGIN
     document.querySelector('#login form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = e.target[0].value;
@@ -268,19 +266,15 @@
       }
     });
 
-    // LOGOUT FUNCTION
     function logout() {
       auth.signOut().then(() => location.reload());
     }
 
-    // Render member area and chat after login
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // Hide signup/login sections
         document.querySelector('#signup').style.display = 'none';
         document.querySelector('#login').style.display = 'none';
 
-        // Insert user bar and member area (only once)
         if (!document.querySelector('#user-bar')) {
           document.body.insertAdjacentHTML(
             'afterbegin',
@@ -297,33 +291,21 @@
               <div class="section" id="upload-area">
                 <h2>📸 مشاركة صورة فلكية</h2>
                 <form id="upload-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                  <input
-                    type="text"
-                    id="astro-title"
-                    placeholder="عنوان للصورة"
-                    required
-                    style="padding: 0.5rem;"
-                  />
+                  <input type="text" id="astro-title" placeholder="عنوان للصورة" required style="padding: 0.5rem;" />
                   <input type="file" id="astro-file" accept="image/*" required />
-                  <button
-                    type="submit"
-                    style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;"
-                  >
+                  <button type="submit" style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
                     رفع
                   </button>
                 </form>
               </div>
 
-              <!-- New Chat System -->
               <div class="section" id="chat-section">
                 <h2>💬 دردشة النادي</h2>
-                <ul id="chat-messages"></ul>
+                <div id="chat-area">
+                  <ul id="chat-messages"></ul>
+                </div>
                 <form id="chat-form" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                  <textarea
-                    id="chat-input"
-                    placeholder="شارك أفكارك أو إعلاناتك هنا..."
-                    required
-                  ></textarea>
+                  <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
                   <button type="submit">إرسال</button>
                 </form>
               </div>
@@ -331,16 +313,11 @@
           `
           );
 
-          // Start listening to chat messages
           listenToChatMessages();
         }
-      } else {
-        // User logged out: reload page to reset UI
-        // (Or you could show login/signup sections)
       }
     });
 
-    // Handle astro photo upload
     document.addEventListener('submit', async (e) => {
       if (e.target && e.target.id === 'upload-form') {
         e.preventDefault();
@@ -381,18 +358,12 @@
       }
     });
 
-    // CHAT SYSTEM
-
-    // CHAT SYSTEM
-
-    // Function to escape HTML (protect from XSS)
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
 
-    // Function to format timestamp nicely (e.g. "12:30 PM, 28-07-2025")
     function formatTimestamp(timestamp) {
       if (!timestamp) return '';
       const date = timestamp.toDate();
@@ -406,7 +377,6 @@
       });
     }
 
-    // Listen for chat messages in realtime and render
     function listenToChatMessages() {
       const chatMessagesList = document.getElementById('chat-messages');
 
@@ -414,13 +384,10 @@
         .orderBy('timestamp', 'asc')
         .onSnapshot(
           (snapshot) => {
-            console.log('Chat snapshot size:', snapshot.size);
             chatMessagesList.innerHTML = '';
 
             snapshot.forEach((doc) => {
               const msg = doc.data();
-              console.log('Chat message:', msg);
-
               if (!msg.text || !msg.email) return;
 
               const timestampFormatted = msg.timestamp
@@ -443,7 +410,6 @@
           }
         );
 
-      // Chat form submit handler
       const chatForm = document.getElementById('chat-form');
       chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -470,7 +436,6 @@
         }
       });
     }
-
   </script>
 </body>
 </html>
