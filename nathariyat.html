@@ -43,8 +43,9 @@
 
 <div id="blogs"></div>
 
+<!-- Cloudinary Upload Widget + Firebase SDKs already included in <head> -->
+
 <script>
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
     authDomain: "syrianyouthastro.firebaseapp.com",
@@ -54,10 +55,49 @@
     appId: "1:105047646564:web:7901e202f6467b0b745a71",
   };
 
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
+  let uploadedImageUrl = null;
+
+  // Cloudinary Upload Widget
+  const cloudinaryWidget = cloudinary.createUploadWidget({
+    cloudName: 'dpgkvqpef',
+    uploadPreset: 'unsigned_preset',
+    multiple: false,
+    sources: ['local', 'url', 'camera'],
+    resourceType: 'image'
+  }, (error, result) => {
+    if (!error && result.event === "success") {
+      uploadedImageUrl = result.info.secure_url;
+      document.getElementById('imagePreview').src = uploadedImageUrl;
+      document.getElementById('imagePreview').style.display = 'block';
+    }
+  });
+
+  // Hide the image input field and replace it with a widget button
+  document.addEventListener("DOMContentLoaded", () => {
+    const imageInput = document.getElementById('image');
+    imageInput.style.display = 'none';
+
+    const uploadBtn = document.createElement('button');
+    uploadBtn.textContent = '📸 اختيار صورة من جهازك';
+    uploadBtn.type = 'button';
+    uploadBtn.style.marginBottom = '10px';
+    uploadBtn.onclick = () => cloudinaryWidget.open();
+
+    imageInput.parentNode.insertBefore(uploadBtn, imageInput);
+
+    const preview = document.createElement('img');
+    preview.id = 'imagePreview';
+    preview.style.maxWidth = '100%';
+    preview.style.marginTop = '10px';
+    preview.style.display = 'none';
+    imageInput.parentNode.insertBefore(preview, imageInput.nextSibling);
+  });
+
+  // Blog post form submission
   const form = document.getElementById('blogForm');
   const blogsDiv = document.getElementById('blogs');
 
@@ -66,49 +106,40 @@
 
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
-    const imageInput = document.getElementById('image');
-    const imageFile = imageInput.files[0];
 
     if (!title || !content) {
       alert('يرجى تعبئة العنوان والنص.');
       return;
     }
 
+    const user = auth.currentUser;
+    if (!user) {
+      alert('❗ يجب تسجيل الدخول لنشر النظرية.');
+      return;
+    }
+
     try {
-      let imageUrl = null;
-
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("upload_preset", "unsigned_preset");
-
-        const response = await fetch("https://api.cloudinary.com/v1_1/dpgkvqpef/image/upload", {
-          method: "POST",
-          body: formData
-        });
-
-        const data = await response.json();
-        imageUrl = data.secure_url;
-      }
-
       await db.collection('nathariyat_posts').add({
         title,
         content,
-        imageUrl: imageUrl || null,
+        imageUrl: uploadedImageUrl || null,
+        userId: user.uid,
+        email: user.email,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      alert('✅ تم نشر النظريّة بنجاح!');
+      alert('✅ تم نشر النظرية بنجاح!');
       form.reset();
+      uploadedImageUrl = null;
+      document.getElementById('imagePreview').style.display = 'none';
     } catch (error) {
-      alert('❌ حدث خطأ أثناء نشر النظريّة: ' + error.message);
+      alert('❌ حدث خطأ أثناء نشر النظرية: ' + error.message);
     }
   });
 
   function createBlogPostElement(post) {
     const div = document.createElement('div');
     div.className = 'blog-post';
-
     let html = `<h3>${escapeHtml(post.title)}</h3><p>${escapeHtml(post.content)}</p>`;
     if (post.imageUrl) {
       html += `<img src="${post.imageUrl}" alt="صورة للنظرية" />`;
@@ -137,8 +168,16 @@
       });
   }
 
-  loadBlogs();
+  // Check login and load blogs
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      alert("🛑 يجب تسجيل الدخول لنشر النظريات.");
+      document.getElementById('blogForm').style.display = 'none';
+    }
+    loadBlogs();
+  });
 </script>
+
 
 </body>
 </html>
