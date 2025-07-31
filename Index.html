@@ -236,8 +236,9 @@
         if (!user) return alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
         try {
           await db.collection("users").doc(user.uid).set({
-            mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
-          }, { merge: true });
+  email: user.email, // Add the email
+  mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+}, { merge: true });
           alert('✅ تم رفع الملف وحفظه بنجاح!');
         } catch (e) {
           console.error(e);

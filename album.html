@@ -68,7 +68,7 @@
         const usersSnapshot = await db.collection('users').get();
         usersSnapshot.forEach(doc => {
           const data = doc.data();
-          const email = doc.id;
+const email = data.email || "مستخدم مجهول";
           const media = data.mediaUploads || [];
           media.forEach(url => {
             const card = document.createElement('div');
