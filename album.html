@@ -112,13 +112,7 @@
     const db = firebase.firestore();
     const galleryDiv = document.getElementById('gallery');
 
-    // Anonymous sign-in (optional but safe for Firestore read rules)
-    auth.signInAnonymously().then(() => {
-      console.log("Signed in anonymously.");
-      loadGallery();
-    }).catch(error => {
-      console.error("Anonymous login failed:", error);
-    });
+
 
     // Load the gallery
     async function loadGallery() {
