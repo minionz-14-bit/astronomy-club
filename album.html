@@ -172,7 +172,8 @@ firebase.auth().onAuthStateChanged(user => {
         const uid = auth.currentUser.uid;
         try {
           await db.collection("users").doc(uid).set({
-            email: uploaderEmail || "مستخدم مجهول",
+            email: auth.currentUser.email || "مستخدم مجهول",
+
             mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
           }, { merge: true });
           alert('✅ تم الرفع بنجاح! أعد تحميل الصفحة لرؤية التحديث.');
