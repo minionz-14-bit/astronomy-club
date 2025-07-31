@@ -130,17 +130,35 @@
 
     // Setup Cloudinary upload widget
     const uploadBtn = document.getElementById("upload-btn");
-let uploaderEmail = localStorage.getItem("uploaderEmail");
-
-if (!uploaderEmail || uploaderEmail.trim() === "") {
-  uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
-  if (uploaderEmail && uploaderEmail.includes("@")) {
-    localStorage.setItem("uploaderEmail", uploaderEmail);
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    // User is signed in (from Index.html or elsewhere)
+    console.log("Signed in as:", user.email);
+    localStorage.setItem("uploaderEmail", user.email); // Save to use for uploads
+    loadGallery(); // Show album
   } else {
-    alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
-    location.reload(); // Retry
+    // Not signed in → fallback to anonymous
+    firebase.auth().signInAnonymously()
+      .then(() => {
+        console.log("Signed in anonymously.");
+        let uploaderEmail = localStorage.getItem("uploaderEmail");
+        if (!uploaderEmail || uploaderEmail.trim() === "") {
+          uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
+          if (uploaderEmail && uploaderEmail.includes("@")) {
+            localStorage.setItem("uploaderEmail", uploaderEmail);
+          } else {
+            alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
+            location.reload();
+          }
+        }
+        loadGallery();
+      })
+      .catch(err => {
+        console.error("Anonymous login failed:", err);
+      });
   }
-}
+});
+
 
     const cloudinaryWidget = cloudinary.createUploadWidget({
       cloudName: 'dpgkvqpef',
