@@ -130,12 +130,15 @@
 
     // Setup Cloudinary upload widget
     const uploadBtn = document.getElementById("upload-btn");
-    let uploaderEmail = localStorage.getItem("uploaderEmail");
+let uploaderEmail = localStorage.getItem("uploaderEmail");
 
-if (!uploaderEmail) {
-  uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:");
-  if (uploaderEmail) {
+if (!uploaderEmail || uploaderEmail.trim() === "") {
+  uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
+  if (uploaderEmail && uploaderEmail.includes("@")) {
     localStorage.setItem("uploaderEmail", uploaderEmail);
+  } else {
+    alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
+    location.reload(); // Retry
   }
 }
 
