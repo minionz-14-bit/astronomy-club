@@ -75,6 +75,21 @@
       🔙 العودة إلى الصفحة الرئيسية
     </a>
   </div>
+  <!-- 🚨 Sign-in reminder (will show conditionally) -->
+  <div id="signin-warning" style="
+    display: none;
+    background-color: #ffdddd;
+    color: #b30000;
+    border: 1px solid #b30000;
+    padding: 1rem;
+    margin: 0 auto 1rem;
+    text-align: center;
+    font-weight: bold;
+    max-width: 600px;
+    border-radius: 8px;
+  ">
+    ⚠️ لم تقم بتسجيل الدخول. يُفضّل تسجيل الدخول لحفظ الصور باسمك ومتابعة نشاطك!
+  </div>
 
   <h1>📸 ألبوم الصور</h1>
   <button id="upload-btn">📤 رفع صورة أو فيديو</button>
@@ -131,31 +146,36 @@
     // Setup Cloudinary upload widget
     const uploadBtn = document.getElementById("upload-btn");
 firebase.auth().onAuthStateChanged(user => {
+  const warningBox = document.getElementById("signin-warning");
+
   if (user) {
-    // User is signed in (from Index.html or elsewhere)
-    console.log("Signed in as:", user.email);
-    localStorage.setItem("uploaderEmail", user.email); // Save to use for uploads
-    loadGallery(); // Show album
+    // Show warning only if user is anonymous
+    if (user.isAnonymous) {
+      warningBox.style.display = "block";
+    } else {
+      warningBox.style.display = "none";
+    }
+
+    const uploaderEmail = user.email || localStorage.getItem("uploaderEmail");
+
+    if (!uploaderEmail) {
+      const enteredEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
+      if (enteredEmail && enteredEmail.includes("@")) {
+        localStorage.setItem("uploaderEmail", enteredEmail);
+      } else {
+        alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
+        location.reload();
+        return;
+      }
+    } else {
+      localStorage.setItem("uploaderEmail", uploaderEmail);
+    }
+
+    loadGallery();
   } else {
-    // Not signed in → fallback to anonymous
-    firebase.auth().signInAnonymously()
-      .then(() => {
-        console.log("Signed in anonymously.");
-        let uploaderEmail = localStorage.getItem("uploaderEmail");
-        if (!uploaderEmail || uploaderEmail.trim() === "") {
-          uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
-          if (uploaderEmail && uploaderEmail.includes("@")) {
-            localStorage.setItem("uploaderEmail", uploaderEmail);
-          } else {
-            alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
-            location.reload();
-          }
-        }
-        loadGallery();
-      })
-      .catch(err => {
-        console.error("Anonymous login failed:", err);
-      });
+    firebase.auth().signInAnonymously().catch(err => {
+      console.error("Anonymous login failed:", err);
+    });
   }
 });
 
