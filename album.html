@@ -74,22 +74,26 @@
     ">
       🔙 العودة إلى الصفحة الرئيسية
     </a>
-  </div>
-  <!-- 🚨 Sign-in reminder (will show conditionally) -->
-  <div id="signin-warning" style="
-    display: none;
-    background-color: #ffdddd;
-    color: #b30000;
-    border: 1px solid #b30000;
-    padding: 1rem;
-    margin: 0 auto 1rem;
-    text-align: center;
-    font-weight: bold;
-    max-width: 600px;
-    border-radius: 8px;
-  ">
-    ⚠️ لم تقم بتسجيل الدخول. يُفضّل تسجيل الدخول لحفظ الصور باسمك ومتابعة نشاطك!
-  </div>
+  <!-- 🚨 Sign-in reminder -->
+<div id="signin-warning" style="
+  display: none;
+  background-color: #ffdddd;
+  color: #b30000;
+  border: 1px solid #b30000;
+  padding: 1rem;
+  margin: 0 auto 1rem;
+  text-align: center;
+  font-weight: bold;
+  max-width: 600px;
+  border-radius: 8px;
+">
+  ⚠️ يجب تسجيل الدخول للوصول إلى الألبوم ورفع الصور.
+  <br />
+  <a href="Index.html#login" style="color: #b30000; text-decoration: underline;">
+    🔐 اضغط هنا لتسجيل الدخول
+  </a>
+</div>
+
 
   <h1>📸 ألبوم الصور</h1>
   <button id="upload-btn">📤 رفع صورة أو فيديو</button>
@@ -142,39 +146,27 @@
 firebase.auth().onAuthStateChanged(user => {
   const warningBox = document.getElementById("signin-warning");
 
-  if (user) {
-    console.log("Logged in as:", user.email || "anonymous");
-    console.log("Anonymous:", user.isAnonymous);
-
-    // Show red warning if user is anonymous
-    if (user.isAnonymous) {
-      warningBox.style.display = "block";
-    } else {
-      warningBox.style.display = "none";
-    }
-
-    const uploaderEmail = user.email || localStorage.getItem("uploaderEmail");
-
-    if (!uploaderEmail) {
-      const enteredEmail = prompt("📝 أدخل بريدك الإلكتروني:").trim();
-      if (enteredEmail && enteredEmail.includes("@")) {
-        localStorage.setItem("uploaderEmail", enteredEmail);
-      } else {
-        alert("❗ يرجى إدخال بريد إلكتروني صحيح.");
-        location.reload();
-        return;
-      }
-    } else {
-      localStorage.setItem("uploaderEmail", uploaderEmail);
-    }
-
-    loadGallery();
-  } else {
-    firebase.auth().signInAnonymously().catch(err => {
-      console.error("Anonymous login failed:", err);
-    });
+  if (!user) {
+    // ❌ Not signed in — show warning and stop everything
+    warningBox.style.display = "block";
+    document.getElementById("upload-btn").style.display = "none";
+    return;
   }
+
+  // ✅ Signed in
+  warningBox.style.display = "none";
+
+  const uploaderEmail = user.email;
+
+  if (!uploaderEmail || !uploaderEmail.includes("@")) {
+    alert("❗ حسابك لا يحتوي على بريد إلكتروني صالح.");
+    return;
+  }
+
+  localStorage.setItem("uploaderEmail", uploaderEmail);
+  loadGallery();
 });
+
 
 
 
