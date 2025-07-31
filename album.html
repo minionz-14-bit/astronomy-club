@@ -143,7 +143,10 @@ firebase.auth().onAuthStateChanged(user => {
   const warningBox = document.getElementById("signin-warning");
 
   if (user) {
-    // Show warning only if user is anonymous
+    console.log("Logged in as:", user.email || "anonymous");
+    console.log("Anonymous:", user.isAnonymous);
+
+    // Show red warning if user is anonymous
     if (user.isAnonymous) {
       warningBox.style.display = "block";
     } else {
@@ -172,6 +175,7 @@ firebase.auth().onAuthStateChanged(user => {
     });
   }
 });
+
 
 
     const cloudinaryWidget = cloudinary.createUploadWidget({
