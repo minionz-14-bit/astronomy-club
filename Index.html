@@ -332,13 +332,11 @@
           });
           chatList.scrollTop = chatList.scrollHeight;
         }, err => console.error(err));
-
-      // Smooth scroll
-      document.body.addEventListener('click', e => {
-        if (e.target.id === 'join-button') {
-          document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
-        }
-      });
+     document.body.addEventListener('click', e => {
+  if (e.target.id === 'join-button') {
+    window.location.href = 'apply.html';
+  }
+});
     });
   </script>
 
