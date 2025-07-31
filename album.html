@@ -130,7 +130,14 @@
 
     // Setup Cloudinary upload widget
     const uploadBtn = document.getElementById("upload-btn");
-    let uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:");
+    let uploaderEmail = localStorage.getItem("uploaderEmail");
+
+if (!uploaderEmail) {
+  uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:");
+  if (uploaderEmail) {
+    localStorage.setItem("uploaderEmail", uploaderEmail);
+  }
+}
 
     const cloudinaryWidget = cloudinary.createUploadWidget({
       cloudName: 'dpgkvqpef',
