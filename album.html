@@ -36,14 +36,33 @@
       margin-top: 8px;
       color: #777;
     }
+    #upload-btn {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.8rem 1.2rem;
+      background-color: #014421;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #upload-btn:hover {
+      background-color: #026633;
+    }
   </style>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 </head>
 <body>
   <h1>📸 ألبوم الصور</h1>
+  <button id="upload-btn">📤 رفع صورة أو فيديو</button>
   <div class="gallery" id="gallery"></div>
 
   <script>
@@ -59,22 +78,28 @@
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
-
     const galleryDiv = document.getElementById('gallery');
 
+    // Anonymous sign-in (optional but safe for Firestore read rules)
+    auth.signInAnonymously().then(() => {
+      console.log("Signed in anonymously.");
+      loadGallery();
+    }).catch(error => {
+      console.error("Anonymous login failed:", error);
+    });
+
+    // Load the gallery
     async function loadGallery() {
       try {
         const usersSnapshot = await db.collection('users').get();
         usersSnapshot.forEach(doc => {
           const data = doc.data();
-const email = data.email || "مستخدم مجهول";
           const media = data.mediaUploads || [];
-          console.log("User:", data.email || doc.id, "Media:", media);
-media.forEach(url => {
-  const card = document.createElement('div');
-  ...
-
+          const email = data.email || "مستخدم مجهول";
+          media.forEach(url => {
+            const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
               <img src="${url}" alt="User upload" />
@@ -88,7 +113,36 @@ media.forEach(url => {
       }
     }
 
-    loadGallery();
+    // Setup Cloudinary upload widget
+    const uploadBtn = document.getElementById("upload-btn");
+    let uploaderEmail = prompt("📝 أدخل بريدك الإلكتروني:");
+
+    const cloudinaryWidget = cloudinary.createUploadWidget({
+      cloudName: 'dpgkvqpef',
+      uploadPreset: 'unsigned_preset',
+      multiple: true,
+      sources: ['local', 'camera', 'url'],
+      resourceType: 'auto'
+    }, async (err, res) => {
+      if (!err && res.event === "success") {
+        const fileUrl = res.info.secure_url;
+        const uid = auth.currentUser.uid;
+        try {
+          await db.collection("users").doc(uid).set({
+            email: uploaderEmail || "مستخدم مجهول",
+            mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+          }, { merge: true });
+          alert('✅ تم الرفع بنجاح! أعد تحميل الصفحة لرؤية التحديث.');
+        } catch (e) {
+          console.error("Error saving to Firestore:", e);
+          alert("❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.");
+        }
+      }
+    });
+
+    uploadBtn.addEventListener("click", () => {
+      cloudinaryWidget.open();
+    });
   </script>
 </body>
 </html>
