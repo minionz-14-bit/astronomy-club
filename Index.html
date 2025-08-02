@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,331 +15,167 @@
   />
 
   <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background-color: #1a9107;
+      color: #f6f6f6;
+    }
+
+    header {
+      background-color: #fff1cc;
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      border-bottom: 4px solid #1ed102;
+    }
+
+    .logo {
+      max-width: 140px;
+      margin-bottom: 1rem;
+    }
+
+    .slogan {
+      font-size: 2rem;
+      font-family: 'Lateef', 'Amiri', serif;
+      color: #1a9107;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: #459139;
+      margin: 0 1rem;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    .section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      background-color: #71d162;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      border-bottom: 2px solid #fff;
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      line-height: 1.8rem;
+    }
+
     input, textarea {
       font-size: 1rem;
       border: none;
       border-radius: 4px;
       padding: 0.5rem;
       font-family: 'Poppins', Arial, sans-serif;
-      box-sizing: border-box;
+      width: 100%;
     }
+
     button {
       border: none;
       border-radius: 4px;
+      padding: 0.7rem;
+      background-color: #1ed102;
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
       transition: background 0.3s ease;
-      font-family: 'Poppins', Arial, sans-serif;
     }
-    button:hover { background-color: #d4c18f; }
-    body {
-      margin: 0;
-      font-family: 'Poppins', Arial, sans-serif;
-      background-color: #014421;
-      color: #c2b280;
+
+    button:hover {
+      background-color: #459139;
     }
-    header { text-align: center; padding: 2rem 1rem 1rem; }
-    .logo { max-width: 138px; margin-bottom: 1rem; }
-    .slogan {
-      font-size: 2rem;
-      font-family: 'Lateef', 'Amiri', 'Arial', serif;
-      font-weight: 700;
-      line-height: 3rem;
-      text-align: center;
-    }
-    .section {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-    }
-    h2 {
-      border-bottom: 2px solid #c2b280;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      font-weight: bold;
-    }
-    p { line-height: 1.8rem; margin: 1rem 0; }
+
     footer {
+      background-color: #4d4b49;
+      color: #fff;
+      padding: 2rem 1rem;
       text-align: center;
       font-size: 0.9rem;
-      padding: 2rem 1rem 1rem;
-      color: #c2b280aa;
     }
-    /* Chat Styles */
-    #chat-area {
-      background: #023615;
-      border-radius: 6px;
-      padding: 1rem;
-      margin-top: 1rem;
-      max-height: 250px;
-      overflow-y: auto;
-      color: #dcd6b8;
-      font-size: 0.95rem;
-      box-shadow: inset 0 0 10px #011b0f;
+
+    footer a {
+      color: #fff;
+      text-decoration: underline;
+      margin: 0 0.5rem;
     }
-    #chat-messages {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 1rem 0;
-    }
-    #chat-messages li {
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid #2a3a23;
-      padding-bottom: 0.5rem;
-    }
-    #chat-messages li .author {
-      font-weight: bold;
-      color: #c2b280;
-      margin-bottom: 0.2rem;
-    }
-    #chat-messages li .timestamp {
-      font-size: 0.75rem;
-      color: #889977aa;
-      float: left;
-    }
-    #chat-form textarea {
-      width: 100%;
-      min-height: 70px;
-      resize: vertical;
-      background-color: #0b3b11;
-      color: #c2b280;
-      border: 1px solid #2e5d22;
-      box-sizing: border-box;
-    }
-    #chat-form button {
-      margin-top: 0.5rem;
-      padding: 0.7rem;
-      background-color: #c2b280;
-      color: #014421;
-      font-weight: bold;
-    }
-    #user-bar {
-      text-align: center;
-      padding: 1rem;
-      background-color: #c2b280;
-      color: #014421;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    #user-bar button { margin-right: 0; }
   </style>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-  <!-- Cloudinary Upload Widget -->
-  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 </head>
 <body>
+
   <header>
     <img src="falcon.png" alt="Club Logo" class="logo" />
-    <div class="slogan">
-      يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ... حُرُوفَ الحُرِّيَّةِ فِي صَفْحَةِ السَّمَاءِ
-    </div>
-    <div style="margin-top: 1rem;">
-      <a href="#signup" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">إنشاء حساب</a>
-      <a href="#login" style="color:#C2B280; margin: 0 1rem; text-decoration: underline;">تسجيل دخول</a>
-      <a href="nathariyat.html" style="color:#C2B280; margin: 0 1rem; text-decoration: underline; font-size: 1.2rem;">📚 نظريات</a>
-    </div>
+    <div class="slogan">يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ</div>
+    <nav style="margin-top: 1rem;">
+      <a href="#signup">Sign Up</a>
+      <a href="#login">Login</a>
+      <a href="nathariyat.html">📚 Blog</a>
+      <a href="album.html">📸 Album</a>
+    </nav>
   </header>
 
   <div class="section">
-    <h2>من نحن</h2>
+    <h2>About Us</h2>
     <p>
-      نادي الشباب السوري للفلك هو مساحة يجتمع فيها الفلكيون الهواة والمحترفون لتبادل الأفكار، نشر المعرفة، ومشاركة حب السماء والكون. نهدف إلى بناء مجتمع فلكي نشط، مدعوم بالعلم والشغف.
+      The Syrian Youth Astronomy Club is a community where amateur and professional astronomers come together to exchange ideas, share knowledge, and spread the love of the skies. We aim to build an active Syrian astronomical community driven by science and passion.
     </p>
   </div>
 
   <div class="section">
-    <h2>أهدافنا</h2>
+    <h2>Our Goals</h2>
     <p>
-      - تعزيز الوعي الفلكي بين الشباب.<br />
-      - تنظيم فعاليات، ورشات، ورصدات جماعية.<br />
-      - دعم الأبحاث والمشاريع الفلكية المحلية.<br />
-      - بناء شبكة تواصل بين الفلكيين السوريين.
+      - Raise astronomy awareness among youth.<br />
+      - Organize events, workshops, and group observations.<br />
+      - Support local astronomical research and projects.<br />
+      - Build a network of Syrian astronomers.
     </p>
   </div>
 
   <div class="section">
-    <h2>شارك معنا</h2>
+    <h2>Join Us</h2>
     <p>
-      إذا كنت مهتماً بالفلك، سواء كنت هاوٍ أو مختص، فإننا نرحب بك للانضمام إلى مجتمعنا.
-      <br /><br />
-      <a href="apply.html" style="color: #d4c18f; text-decoration: underline; font-size: 1.5rem;">
-        📩 اضغط هنا لتقديم طلب الانضمام
-      </a>
- <a href="album.html" style="color:#C2B280; margin: 0 1rem; text-decoration: underline; font-size: 1.5rem;">
-      📸 الألبوم
-    </a>
+      If you're passionate about astronomy, whether you're a hobbyist or a specialist, we welcome you to join our community.<br /><br />
+      <a href="apply.html" style="font-size: 1.2rem;">📩 Click here to apply</a>
     </p>
   </div>
 
   <div class="section" id="signup">
-    <h2>إنشاء حساب</h2>
-    <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="email" placeholder="البريد الإلكتروني" required />
-      <input type="password" placeholder="كلمة المرور" required />
-      <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
-        تسجيل
-      </button>
+    <h2>Create an Account</h2>
+    <form onsubmit="return false;">
+      <input type="email" placeholder="Email Address" required /><br />
+      <input type="password" placeholder="Password" required /><br />
+      <button>Sign Up</button>
     </form>
   </div>
 
   <div class="section" id="login">
-    <h2>تسجيل الدخول</h2>
-    <form onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
-      <input type="email" placeholder="البريد الإلكتروني" required />
-      <input type="password" placeholder="كلمة المرور" required />
-      <button style="padding: 0.7rem; background-color: #c2b280; color: #014421; font-weight: bold;">
-        دخول
-      </button>
+    <h2>Log In</h2>
+    <form onsubmit="return false;">
+      <input type="email" placeholder="Email Address" required /><br />
+      <input type="password" placeholder="Password" required /><br />
+      <button>Log In</button>
     </form>
   </div>
 
   <footer>
-    &copy; 2025 نادي الشباب السوري للفلك — جميع الحقوق محفوظة
+    <div>
+      <strong>Quick Links</strong><br />
+      <a href="#signup">Sign Up</a> |
+      <a href="#login">Login</a> |
+      <a href="nathariyat.html">Blog</a> |
+      <a href="album.html">Album</a> |
+      <a href="apply.html">Apply</a>
+    </div>
+    <div style="margin-top: 1rem;">
+      📧 Email: contact@syrianastro.org<br />
+      📍 Location: Syria (online community)<br />
+      &copy; 2025 Syrian Youth Astronomy Club. All rights reserved.
+    </div>
   </footer>
 
-  <script>
-    // Firebase init
-    const firebaseConfig = {
-      apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
-      authDomain: "syrianyouthastro.firebaseapp.com",
-      projectId: "syrianyouthastro",
-      storageBucket: "syrianyouthastro.appspot.com",
-      messagingSenderId: "105047646564",
-      appId: "1:105047646564:web:7901e202f6467b0b745a71"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    const storage = firebase.storage();
-    const db = firebase.firestore();
-
-    // Cloudinary widget
-    const cloudinaryWidget = cloudinary.createUploadWidget({
-      cloudName: 'dpgkvqpef',
-      uploadPreset: 'unsigned_preset',
-      multiple: true,
-      sources: ['local','url','camera'],
-      resourceType: 'auto'
-    }, async (err, res) => {
-      if (!err && res.event === "success") {
-        const fileUrl = res.info.secure_url;
-        const user = auth.currentUser;
-        if (!user) return alert('❗ يجب تسجيل الدخول لحفظ الرابط.');
-        try {
-          await db.collection("users").doc(user.uid).set({
-  email: user.email, // Add the email
-  mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
-}, { merge: true });
-          alert('✅ تم رفع الملف وحفظه بنجاح!');
-        } catch (e) {
-          console.error(e);
-          alert('❌ خطأ أثناء حفظ الرابط في قاعدة البيانات.');
-        }
-      }
-    });
-
-    // Signup & Login
-    document.querySelector('#signup form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const [email, password] = e.target;
-      try { await auth.createUserWithEmailAndPassword(email.value, password.value);
-             alert("✅ تم إنشاء الحساب بنجاح!"); }
-      catch (e) { alert("❌ خطأ: " + e.message); }
-    });
-    document.querySelector('#login form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const [email, password] = e.target;
-      try { await auth.signInWithEmailAndPassword(email.value, password.value);
-             alert("✅ تم تسجيل الدخول!"); }
-      catch (e) { alert("❌ خطأ: " + e.message); }
-    });
-    function logout() { auth.signOut().then(() => location.reload()); }
-
-    // On auth change
-    auth.onAuthStateChanged(user => {
-      if (!user) return;
-      document.getElementById('signup').style.display = 'none';
-      document.getElementById('login').style.display = 'none';
-      if (document.getElementById('user-bar')) return;
-
-      document.body.insertAdjacentHTML('afterbegin', `
-        <div id="user-bar">
-          👋 مرحباً، ${user.email} — 
-          <button onclick="logout()">تسجيل الخروج</button>
-          <button id="upload_widget_opener">Upload Image or Video</button>
-        </div>
-        <div class="section" id="member-area">
-          <h2>الإستقبال</h2>
-          <p>🎯 مرحباً بك في نادي الفلك! قريباً ستتمكن من رفع صورك، نشر مقالات، والمشاركة في الأحداث.</p>
-          <button id="join-button" style="padding:0.5rem 1rem;background:#c2b280;color:#014421;font-weight:bold;border-radius:4px;cursor:pointer;margin-top:1rem;">
-            اتريد ان تكون عضوا؟
-          </button>
-          <div class="section" id="chat-section">
-            <h2>💬 دردشة النادي</h2>
-            <div id="chat-area"><ul id="chat-messages"></ul></div>
-            <form id="chat-form" style="display:flex;flex-direction:column;gap:0.5rem;">
-              <textarea id="chat-input" placeholder="شارك أفكارك أو إعلاناتك هنا..." required></textarea>
-              <button type="submit">إرسال</button>
-            </form>
-          </div>
-        </div>
-      `);
-
-      document.getElementById("upload_widget_opener")
-              .addEventListener("click", () => cloudinaryWidget.open(), false);
-
-      // Chat send
-      document.getElementById('chat-form').addEventListener('submit', async e => {
-        e.preventDefault();
-        const text = document.getElementById('chat-input').value.trim();
-        if (!text) return;
-        try {
-          await db.collection('chat_messages').add({
-            userId: user.uid,
-            email: user.email,
-            text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          document.getElementById('chat-input').value = '';
-        } catch (e) {
-          alert('❌ خطأ أثناء إرسال الرسالة: ' + e.message);
-        }
-      });
-
-      // Listen for messages
-      const chatList = document.getElementById('chat-messages');
-      db.collection('chat_messages').orderBy('timestamp','asc')
-        .onSnapshot(snap => {
-          chatList.innerHTML = '';
-          snap.forEach(doc => {
-            const m = doc.data();
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <div class="author">${m.email}</div>
-              <div class="timestamp">${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleString('ar-EG',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric',hour12:true}) : ''}</div>
-              <div class="content">${m.text}</div>
-            `;
-            chatList.appendChild(li);
-          });
-          chatList.scrollTop = chatList.scrollHeight;
-        }, err => console.error(err));
-     document.body.addEventListener('click', e => {
-  if (e.target.id === 'join-button') {
-    window.location.href = 'apply.html';
-  }
-});
-    });
-  </script>
-
-  <div id="bottom-target" style="margin-bottom:50px;"></div>
 </body>
 </html>
