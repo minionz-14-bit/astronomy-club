@@ -6,13 +6,10 @@
   <title>Syrian Youth Astronomy Club</title>
   <link rel="icon" type="image/png" href="favicon.png" />
 
-  <!-- Fonts: Poppins + Lateef -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Poppins:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
     body {
@@ -21,51 +18,43 @@
       background-color: #1a9107;
       color: #f6f6f6;
     }
-
     header {
       background-color: #fff1cc;
       text-align: center;
       padding: 2rem 1rem 1rem;
       border-bottom: 4px solid #1ed102;
     }
-
     .logo {
       max-width: 140px;
       margin-bottom: 1rem;
     }
-
     .slogan {
       font-size: 2rem;
       font-family: 'Lateef', 'Amiri', serif;
       color: #1a9107;
       font-weight: bold;
     }
-
     nav a {
       color: #459139;
       margin: 0 1rem;
       text-decoration: underline;
       font-weight: bold;
     }
-
     .section {
       max-width: 900px;
       margin: 2rem auto;
-      padding: 0 1.5rem;
+      padding: 1.5rem;
       background-color: #71d162;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-
     h2 {
       border-bottom: 2px solid #fff;
       padding-bottom: 0.5rem;
     }
-
     p {
       line-height: 1.8rem;
     }
-
     input, textarea {
       font-size: 1rem;
       border: none;
@@ -73,8 +62,8 @@
       padding: 0.5rem;
       font-family: 'Poppins', Arial, sans-serif;
       width: 100%;
+      box-sizing: border-box;
     }
-
     button {
       border: none;
       border-radius: 4px;
@@ -85,11 +74,9 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-
     button:hover {
       background-color: #459139;
     }
-
     footer {
       background-color: #4d4b49;
       color: #fff;
@@ -97,19 +84,63 @@
       text-align: center;
       font-size: 0.9rem;
     }
-
     footer a {
       color: #fff;
       text-decoration: underline;
       margin: 0 0.5rem;
     }
+    #chat-area {
+      background: #023615;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      max-height: 250px;
+      overflow-y: auto;
+      color: #dcd6b8;
+      font-size: 0.95rem;
+      box-shadow: inset 0 0 10px #011b0f;
+    }
+    #chat-messages {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+    #chat-messages li {
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #2a3a23;
+      padding-bottom: 0.5rem;
+    }
+    #chat-messages li .author {
+      font-weight: bold;
+      color: #c2b280;
+      margin-bottom: 0.2rem;
+    }
+    #chat-messages li .timestamp {
+      font-size: 0.75rem;
+      color: #889977aa;
+      float: left;
+    }
+    #chat-form textarea {
+      background-color: #0b3b11;
+      color: #c2b280;
+      border: 1px solid #2e5d22;
+    }
   </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 </head>
 <body>
 
   <header>
     <img src="falcon.png" alt="Club Logo" class="logo" />
-    <div class="slogan">يَخُطُّ العُقَابُ بِرِيشِ الجَنَاحِ</div>
+    <div class="slogan">نتطلع إلى ما هو أبعد</div>
     <nav style="margin-top: 1rem;">
       <a href="#signup">Sign Up</a>
       <a href="#login">Login</a>
@@ -146,8 +177,8 @@
   <div class="section" id="signup">
     <h2>Create an Account</h2>
     <form onsubmit="return false;">
-      <input type="email" placeholder="Email Address" required /><br />
-      <input type="password" placeholder="Password" required /><br />
+      <input type="email" placeholder="Email Address" required />
+      <input type="password" placeholder="Password" required />
       <button>Sign Up</button>
     </form>
   </div>
@@ -155,8 +186,8 @@
   <div class="section" id="login">
     <h2>Log In</h2>
     <form onsubmit="return false;">
-      <input type="email" placeholder="Email Address" required /><br />
-      <input type="password" placeholder="Password" required /><br />
+      <input type="email" placeholder="Email Address" required />
+      <input type="password" placeholder="Password" required />
       <button>Log In</button>
     </form>
   </div>
@@ -171,11 +202,144 @@
       <a href="apply.html">Apply</a>
     </div>
     <div style="margin-top: 1rem;">
-      📧 Email: contact@syrianastro.org<br />
-      📍 Location: Syria (online community)<br />
+      📧 Email: abdneu2024@gmail.com<br />
+      📍 Location: (online community)<br />
       &copy; 2025 Syrian Youth Astronomy Club. All rights reserved.
     </div>
   </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVzkSxKGc2jR43aYnYP6QX03B37WVRVok",
+      authDomain: "syrianyouthastro.firebaseapp.com",
+      projectId: "syrianyouthastro",
+      storageBucket: "syrianyouthastro.appspot.com",
+      messagingSenderId: "105047646564",
+      appId: "1:105047646564:web:7901e202f6467b0b745a71"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const storage = firebase.storage();
+    const db = firebase.firestore();
+
+    const cloudinaryWidget = cloudinary.createUploadWidget({
+      cloudName: 'dpgkvqpef',
+      uploadPreset: 'unsigned_preset',
+      multiple: true,
+      sources: ['local','url','camera'],
+      resourceType: 'auto'
+    }, async (err, res) => {
+      if (!err && res.event === "success") {
+        const fileUrl = res.info.secure_url;
+        const user = auth.currentUser;
+        if (!user) return alert('❗ Login required to save uploads.');
+        try {
+          await db.collection("users").doc(user.uid).set({
+            email: user.email,
+            mediaUploads: firebase.firestore.FieldValue.arrayUnion(fileUrl)
+          }, { merge: true });
+          alert('✅ Uploaded and saved successfully!');
+        } catch (e) {
+          alert('❌ Error saving to database.');
+        }
+      }
+    });
+
+    document.querySelector('#signup form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const [email, password] = e.target;
+      try {
+        await auth.createUserWithEmailAndPassword(email.value, password.value);
+        alert("✅ Account created successfully!");
+      } catch (e) {
+        alert("❌ Error: " + e.message);
+      }
+    });
+
+    document.querySelector('#login form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const [email, password] = e.target;
+      try {
+        await auth.signInWithEmailAndPassword(email.value, password.value);
+        alert("✅ Logged in!");
+      } catch (e) {
+        alert("❌ Error: " + e.message);
+      }
+    });
+
+    function logout() { auth.signOut().then(() => location.reload()); }
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return;
+      document.getElementById('signup').style.display = 'none';
+      document.getElementById('login').style.display = 'none';
+      if (document.getElementById('user-bar')) return;
+
+      document.body.insertAdjacentHTML('afterbegin', `
+        <div id="user-bar" style="text-align:center;padding:1rem;background-color:#c2b280;color:#014421;margin-bottom:1rem;">
+          👋 Welcome, ${user.email}
+          <button onclick="logout()" style="margin-left:1rem;">Logout</button>
+          <button id="upload_widget_opener">Upload Media</button>
+        </div>
+        <div class="section">
+          <h2>🏠 Member Area</h2>
+          <p>Welcome to the club! Soon you’ll be able to post images, blogs, and join events.</p>
+          <button id="join-button" style="margin-top:1rem;">Want to become a member?</button>
+        </div>
+        <div class="section" id="chat-section">
+          <h2>💬 Club Chat</h2>
+          <div id="chat-area"><ul id="chat-messages"></ul></div>
+          <form id="chat-form" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <textarea id="chat-input" placeholder="Share your ideas..." required></textarea>
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      `);
+
+      document.getElementById("upload_widget_opener")
+              .addEventListener("click", () => cloudinaryWidget.open(), false);
+
+      document.getElementById('chat-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const text = document.getElementById('chat-input').value.trim();
+        if (!text) return;
+        try {
+          await db.collection('chat_messages').add({
+            userId: user.uid,
+            email: user.email,
+            text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          document.getElementById('chat-input').value = '';
+        } catch (e) {
+          alert('❌ Error sending message: ' + e.message);
+        }
+      });
+
+      const chatList = document.getElementById('chat-messages');
+      db.collection('chat_messages').orderBy('timestamp','asc').onSnapshot(snap => {
+        chatList.innerHTML = '';
+        snap.forEach(doc => {
+          const m = doc.data();
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <div class="author">${m.email}</div>
+            <div class="timestamp">${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleString() : ''}</div>
+            <div class="content">${m.text}</div>
+          `;
+          chatList.appendChild(li);
+        });
+        chatList.scrollTop = chatList.scrollHeight;
+      }, err => console.error(err));
+
+      document.body.addEventListener('click', e => {
+        if (e.target.id === 'join-button') {
+          window.location.href = 'apply.html';
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
