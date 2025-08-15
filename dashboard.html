@@ -195,20 +195,16 @@ document.getElementById('logout').addEventListener('click', async () => {
 
   // --- Logout handler (with fallback redirect) ---
   logoutBtn.addEventListener('click', async () => {
-    if (!logoutBtn) return;
-    logoutBtn.disabled = true;
-    logoutBtn.textContent = 'Logging out...';
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    } finally {
-      // Fallback redirect even if the auth listener hasn't fired yet
-      // Use the one that matches your file location:
-      window.location.href = 'sign-in.html';     // relative
-      // window.location.replace('/sign-in.html'); // absolute root
-    }
-  });
+  try {
+    await signOut(auth);       // Sign out from Firebase
+    localStorage.clear();      // Clear local storage
+    sessionStorage.clear();    // Clear session storage
+    window.location.href = "sign-in.html"; // Redirect to sign-in page
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+});
+
 </script>
 </body>
 </html>
