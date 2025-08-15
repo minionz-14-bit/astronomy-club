@@ -59,6 +59,8 @@ header {
 
 header #logout {
   justify-self: end; /* right corner */
+	position: relative;
+  z-index: 9999;
 }
 
 
@@ -136,6 +138,14 @@ header #logout {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+document.getElementById('logout').addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    window.location.href = 'sign-in.html'; // Direct redirect after logout
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+});
 
   // Elements
   const greetEl = document.getElementById('greet');
