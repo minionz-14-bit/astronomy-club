@@ -178,10 +178,19 @@ onAuthStateChanged(auth, async (user) => {
   updateStats();
 });
 
-    logoutBtn.addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = 'sign-in.html';
-    });
+logoutBtn.addEventListener('click', async () => {
+  logoutBtn.disabled = true;
+  logoutBtn.textContent = 'Logging out...';
+  try {
+    await signOut(auth);
+    // No manual redirect — onAuthStateChanged will handle it
+  } catch (error) {
+    console.error("Error signing out:", error);
+    logoutBtn.disabled = false;
+    logoutBtn.textContent = 'Log out';
+  }
+});
+
   </script>
 </body>
 </html>
